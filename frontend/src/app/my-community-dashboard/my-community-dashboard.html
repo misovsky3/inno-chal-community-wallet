@@ -1,0 +1,212 @@
+<div class="community-modal-backdrop">
+  <main
+    class="community-dashboard"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="community-title"
+  >
+    <header class="dashboard-header">
+      <div class="status-bar" aria-label="Čas 4:20, mobilný signál, Wi-Fi, batéria">
+        <span>4:20</span>
+        <span class="status-icons" aria-hidden="true">
+          <img src="assets/icons/mobile-signal-icon.svg" alt="" />
+          <img src="assets/icons/wifi-icon.svg" alt="" />
+          <img src="assets/icons/battery-icon.svg" alt="" />
+        </span>
+      </div>
+      <div class="dashboard-toolbar">
+        <button class="back-button" type="button" aria-label="Zavrieť komunitu" (click)="closed.emit()">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4-8 8 8 8" /></svg>
+        </button>
+        <h1 id="community-title">Moje komunity</h1>
+      </div>
+    </header>
+
+    <div class="dashboard-content">
+      @if (loading) {
+        <p class="dashboard-message" role="status">Načítavam komunitu…</p>
+      } @else if (loadError || !account) {
+        <p class="dashboard-message error-message" role="alert">
+          Údaje o komunite sa nepodarilo načítať.
+        </p>
+      } @else {
+        <h2 class="community-heading">{{ communityHeading }}</h2>
+
+        <section class="account-card" aria-label="Účet komunity">
+          <h3>{{ account.name }}</h3>
+          @if (account.iban) {
+            <p class="account-iban">{{ account.iban }}</p>
+          }
+          <div class="account-divider"></div>
+          <div class="account-summary">
+            <div>
+              <p class="balance-label">Aktuálny zostatok</p>
+              <p class="account-balance">{{ formatMoney(account.balance) }}</p>
+            </div>
+            <svg class="balance-chart" viewBox="0 0 132 56" preserveAspectRatio="none" aria-hidden="true">
+              <path class="chart-grid" d="M0 8H132M0 24H132M0 40H132M0 55H132" />
+              <path class="chart-area" d="M0 45 12 40 21 46 34 39 46 42 58 44 69 33 81 36 91 29 101 32 108 17 116 14 124 4 129 19 132 17V56H0Z" />
+              <path class="chart-line" d="M0 45 12 40 21 46 34 39 46 42 58 44 69 33 81 36 91 29 101 32 108 17 116 14 124 4 129 19 132 17" />
+            </svg>
+          </div>
+        </section>
+
+        @if (communityRole() === 'admin') {
+          <nav class="admin-actions" aria-label="Akcie komunity">
+            <button class="admin-action" type="button" (click)="showUnavailable()">
+              <span class="admin-action-icon">
+                <img src="assets/icons/payment-action-icon.svg" alt="" />
+              </span>
+              <span>Platba</span>
+            </button>
+            <button class="admin-action" type="button" (click)="showUnavailable()">
+              <span class="admin-action-icon">
+                <img src="assets/icons/create-goal-icon.svg" alt="" />
+              </span>
+              <span>Vytvoriť<br />cieľ</span>
+            </button>
+            <button class="admin-action" type="button" (click)="showUnavailable()">
+              <span class="admin-action-icon">
+                <img src="assets/icons/start-vote-icon.svg" alt="" />
+              </span>
+              <span>Spustiť<br />hlasovanie</span>
+            </button>
+            <button class="admin-action" type="button" (click)="addMemberRequested.emit()">
+              <span class="admin-action-icon">
+                <img src="assets/icons/add-member-icon.svg" alt="" />
+              </span>
+              <span>Pridať<br />člena</span>
+            </button>
+          </nav>
+        }
+
+        <nav class="dashboard-tabs" role="tablist" aria-label="Komunita">
+          <button type="button" role="tab" [attr.aria-selected]="selectedTab === 'payments'" [class.active]="selectedTab === 'payments'" (click)="selectedTab = 'payments'">Platby</button>
+          <button type="button" role="tab" [attr.aria-selected]="selectedTab === 'goals'" [class.active]="selectedTab === 'goals'" (click)="selectedTab = 'goals'">Ciele</button>
+          <button type="button" role="tab" [attr.aria-selected]="selectedTab === 'votes'" [class.active]="selectedTab === 'votes'" (click)="selectedTab = 'votes'">Hlasovania</button>
+          <button type="button" role="tab" [attr.aria-selected]="selectedTab === 'members'" [class.active]="selectedTab === 'members'" (click)="selectedTab = 'members'">Členovia</button>
+        </nav>
+
+        @if (selectedTab === 'payments') {
+          <div class="search-section">
+            <div class="section-divider" aria-hidden="true"></div>
+            <label class="transaction-search">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3" /><path d="m15.5 15.5 5 5" /></svg>
+              <input type="search" placeholder="Hľadať" aria-label="Hľadať platbu" (input)="onSearch($event)" />
+            </label>
+            <div class="section-divider" aria-hidden="true"></div>
+          </div>
+          <section class="transaction-list" aria-label="Platby" aria-live="polite">
+            @for (group of transactionGroups; track group.key) {
+              <div class="transaction-group">
+                <h3 class="cycle-heading">{{ group.label }}</h3>
+                @for (transaction of group.transactions; track transaction.id) {
+                  <article class="transaction-row">
+                    <span class="transaction-direction" [class.credit]="transaction.direction === 'credit'" [attr.aria-label]="transaction.direction === 'credit' ? 'Príjem' : 'Výdavok'">
+                      {{ transaction.direction === 'credit' ? '+' : '−' }}
+                    </span>
+                    <div class="transaction-copy">
+                      <span class="transaction-title">{{ transactionTitle(transaction) }}</span>
+                      @if (transactionDetail(transaction); as detail) {
+                        <span class="transaction-detail">{{ detail }}</span>
+                      }
+                    </div>
+                    <strong class="transaction-amount" [class.credit]="transaction.direction === 'credit'">
+                      {{ formatTransactionAmount(transaction) }}
+                    </strong>
+                  </article>
+                } @empty {
+                  <p class="dashboard-message">V tomto cykle zatiaľ nie sú žiadne platby.</p>
+                }
+              </div>
+            } @empty {
+              <p class="dashboard-message">Nenašli sa žiadne platby.</p>
+            }
+          </section>
+        } @else if (selectedTab === 'goals') {
+          <section class="goals-section" aria-label="Ciele komunity">
+            <header class="goals-header">
+              <h2>Ciele</h2>
+              <button type="button" class="add-goal-button" (click)="showUnavailable()">Pridať cieľ</button>
+            </header>
+            @for (goal of goals; track goal.id) {
+              <article class="goal-card" [class.goal-card-completed]="goal.status !== 'in_progress'">
+                <header class="goal-card-heading">
+                  <h3>{{ goal.name }}</h3>
+                  <span class="goal-status" [class.goal-status-completed]="goal.status !== 'in_progress'">
+                    {{ goal.status === 'in_progress' ? 'Aktívne' : 'Ukončené' }}
+                  </span>
+                </header>
+                <div class="goal-card-details">
+                  <p class="goal-raised">
+                    Vyzbierané: <strong>{{ formatGoalAmount(goal.raised_amount, goal.currency) }}</strong>
+                  </p>
+                  <p class="goal-target">
+                    Cieľová suma: <strong>{{ formatGoalAmount(goal.target_amount, goal.currency) }}</strong>
+                  </p>
+                  <div
+                    class="goal-progress"
+                    [class.goal-progress-completed]="goal.status !== 'in_progress'"
+                    role="progressbar"
+                    [attr.aria-label]="'Priebeh cieľa ' + goal.name"
+                    [attr.aria-valuenow]="goal.progress_percentage"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  >
+                    <span [style.width.%]="goal.progress_percentage"></span>
+                  </div>
+                  @if (goalRemainingTime(goal); as remainingTime) {
+                    <p class="goal-remaining">{{ remainingTime }}</p>
+                  }
+                </div>
+              </article>
+            } @empty {
+              <p class="dashboard-message goals-empty">Komunita zatiaľ nemá žiadne ciele.</p>
+            }
+          </section>
+        } @else if (selectedTab === 'votes') {
+          <section class="tab-content" aria-label="Hlasovania komunity">
+            <p class="dashboard-message">Hlasovania nie sú dostupné.</p>
+          </section>
+        } @else if (selectedTab === 'members') {
+          <section class="members-section" aria-label="Členovia komunity">
+            <div class="members-header">
+              <h2 class="members-heading">Členovia ({{ members.length }})</h2>
+              <label class="transaction-search member-search">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3" /><path d="m15.5 15.5 5 5" /></svg>
+                <input type="search" placeholder="Hľadať" aria-label="Hľadať člena" (input)="onMemberSearch($event)" />
+              </label>
+            </div>
+            <div class="member-groups">
+              @for (group of memberGroups; track group.role) {
+                <section class="member-group" [attr.aria-label]="group.label">
+                  <h3>{{ group.label }} ({{ group.members.length }})</h3>
+                  @for (member of group.members; track member.id) {
+                    <article class="member-card">
+                      <span class="member-avatar" aria-hidden="true">{{ memberInitials(member.name) }}</span>
+                      <span class="member-copy">
+                        <strong>{{ member.name }}</strong>
+                        <small>{{ member.role === 'admin' ? 'Administrátor komunity' : 'Člen' }}</small>
+                      </span>
+                    </article>
+                  }
+                </section>
+              } @empty {
+                <p class="dashboard-message">Nenašli sa žiadni členovia.</p>
+              }
+            </div>
+          </section>
+        }
+      }
+    </div>
+
+    <div class="home-indicator" [class.members-active]="selectedTab === 'members'" aria-hidden="true"><span></span></div>
+  </main>
+</div>
+
+@if (functionUnavailableOpen) {
+  <app-function-unavailable
+    [embedded]="true"
+    (closed)="closeUnavailable()"
+  />
+}

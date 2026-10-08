@@ -1,0 +1,32 @@
+<svg width="25" height="11" viewBox="0 0 25 11" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g opacity="0.4">
+        <use xlink:href="#stroke0_61_8206" fill="#FF0000" style="mix-blend-mode:saturation"/>
+        <use xlink:href="#stroke0_61_8206" fill="white" style="mix-blend-mode:difference"/>
+        <use xlink:href="#stroke0_61_8206" fill="white" style="mix-blend-mode:saturation"/>
+        <use xlink:href="#stroke0_61_8206" fill="white" style="mix-blend-mode:overlay"/>
+        <use xlink:href="#stroke0_61_8206" fill="black" style="mix-blend-mode:overlay"/>
+        <use xlink:href="#stroke0_61_8206" fill="white" style="mix-blend-mode:overlay"/>
+        <use xlink:href="#stroke0_61_8206" fill="black" style="mix-blend-mode:overlay"/>
+    </g>
+    <use xlink:href="#stroke1_61_8206" fill="#FF0000" style="mix-blend-mode:saturation"/>
+    <use xlink:href="#stroke1_61_8206" fill="white" style="mix-blend-mode:difference"/>
+    <use xlink:href="#stroke1_61_8206" fill="white" style="mix-blend-mode:saturation"/>
+    <use xlink:href="#stroke1_61_8206" fill="white" style="mix-blend-mode:overlay"/>
+    <use xlink:href="#stroke1_61_8206" fill="black" style="mix-blend-mode:overlay"/>
+    <use xlink:href="#stroke1_61_8206" fill="white" style="mix-blend-mode:overlay"/>
+    <use xlink:href="#stroke1_61_8206" fill="black" style="mix-blend-mode:overlay"/>
+    <g opacity="0.4">
+        <use xlink:href="#stroke2_61_8206" fill="#FF0000" style="mix-blend-mode:saturation"/>
+        <use xlink:href="#stroke2_61_8206" fill="white" style="mix-blend-mode:difference"/>
+        <use xlink:href="#stroke2_61_8206" fill="white" style="mix-blend-mode:saturation"/>
+        <use xlink:href="#stroke2_61_8206" fill="white" style="mix-blend-mode:overlay"/>
+        <use xlink:href="#stroke2_61_8206" fill="black" style="mix-blend-mode:overlay"/>
+        <use xlink:href="#stroke2_61_8206" fill="white" style="mix-blend-mode:overlay"/>
+        <use xlink:href="#stroke2_61_8206" fill="black" style="mix-blend-mode:overlay"/>
+    </g>
+    <defs>
+        <path id="stroke0_61_8206" d="M23 7.5C23.8284 7.5 24.5 6.60457 24.5 5.5C24.5 4.39543 23.8284 3.5 23 3.5V7.5Z"/>
+        <path id="stroke1_61_8206" d="M2 3.16659C2 2.43021 2.59695 1.83325 3.33333 1.83325H18.6667C19.403 1.83325 20 2.43021 20 3.16659V7.83325C20 8.56963 19.403 9.16659 18.6667 9.16659H3.33333C2.59695 9.16659 2 8.56963 2 7.83325V3.16659Z"/>
+        <path id="stroke2_61_8206" d="M19 1H3C1.89543 1 1 1.89543 1 3V8C1 9.10457 1.89543 10 3 10H19C20.1046 10 21 9.10457 21 8V3C21 1.89543 20.1046 1 19 1ZM3 0C1.34315 0 0 1.34315 0 3V8C0 9.65685 1.34315 11 3 11H19C20.6569 11 22 9.65685 22 8V3C22 1.34315 20.6569 0 19 0H3Z" fill-rule="evenodd" clip-rule="evenodd"/>
+    </defs>
+</svg>

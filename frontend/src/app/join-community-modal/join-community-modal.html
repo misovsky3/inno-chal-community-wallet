@@ -1,0 +1,64 @@
+<div class="join-backdrop">
+  <section
+    class="join-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="join-title"
+  >
+    <button
+      class="close-button"
+      type="button"
+      aria-label="Zavrieť"
+      [disabled]="joining"
+      (click)="declined.emit()"
+    >×</button>
+
+    <div class="community-mark" aria-hidden="true">
+      <svg viewBox="0 0 48 48">
+        <path d="M8 21 24 8l16 13v19H8z" />
+        <path d="M19 40V27h10v13M16 20h.1M32 20h.1" />
+      </svg>
+    </div>
+
+    <h1 id="join-title">Pozvánka do komunity</h1>
+
+    @if (loading) {
+      <p class="status-message" role="status">Načítavam pozvánku…</p>
+    } @else if (loadError) {
+      <p class="status-message error-message" role="alert">{{ loadError }}</p>
+    } @else {
+      <p class="join-copy">
+        Chcete sa pripojiť ku komunite
+        <strong>{{ community?.name }}</strong>?
+      </p>
+      @if (invitation) {
+        <p class="role-copy">Pridelené oprávnenie: {{ invitationRoleLabel }}</p>
+      }
+    }
+
+    @if (joinError) {
+      <p class="status-message error-message" role="alert">{{ joinError }}</p>
+    }
+
+    <div class="join-actions">
+      <button
+        class="decline-button"
+        type="button"
+        [disabled]="joining"
+        (click)="declined.emit()"
+      >Teraz nie</button>
+      <button
+        class="accept-button"
+        type="button"
+        [disabled]="loading || !!loadError || joining"
+        (click)="accept()"
+      >
+        @if (joining) {
+          Pripájam…
+        } @else {
+          Pripojiť sa
+        }
+      </button>
+    </div>
+  </section>
+</div>

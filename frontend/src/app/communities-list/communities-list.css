@@ -1,0 +1,377 @@
+:host {
+  display: block;
+  color: #fff;
+  font-family: "Tatra banka Sans V1.0", "Nimbus Sans D OT", "Helvetica Neue", Arial, sans-serif;
+}
+
+.communities-screen {
+  position: relative;
+  width: min(100%, 390px);
+  height: 100vh;
+  height: 100dvh;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 32px;
+  background: #000;
+}
+
+.communities-header {
+  position: absolute;
+  z-index: 2;
+  inset: 0 0 auto;
+  height: 149px;
+  background: #1d1e23;
+}
+
+.status-bar {
+  display: flex;
+  height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.status-icons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-icons img {
+  display: block;
+  max-height: 16px;
+  filter: grayscale(1) brightness(0) invert(1);
+}
+
+.communities-toolbar {
+  position: relative;
+  display: grid;
+  height: 44px;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  padding: 0 16px;
+  border-bottom: 1px solid #2c2e34;
+}
+
+.communities-toolbar h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.back-button,
+.add-community-button {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #0097fd;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.back-button {
+  justify-self: start;
+}
+
+.back-button svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.add-community-button {
+  justify-self: end;
+  font-size: 32px;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.community-search {
+  display: flex;
+  height: 40px;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 16px;
+  padding: 0 12px;
+  border-radius: 5px;
+  background: #121315;
+}
+
+.community-search svg {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  fill: none;
+  stroke: #0097fd;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+}
+
+.community-search input {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  font-size: 16px;
+}
+
+.community-search input::placeholder {
+  color: #9194a4;
+  opacity: 1;
+}
+
+.community-search input::-webkit-search-cancel-button {
+  filter: grayscale(1) brightness(0) invert(1);
+}
+
+.communities-content {
+  position: absolute;
+  inset: 149px 0 34px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #000;
+  scrollbar-width: none;
+}
+
+.communities-content::-webkit-scrollbar {
+  display: none;
+}
+
+.promo-section {
+  height: 150px;
+  padding: 12px 16px 0;
+  background: #000;
+}
+
+.promo-section.promo-hidden {
+  height: 0;
+  padding: 0;
+}
+
+.promo-card {
+  position: relative;
+  display: flex;
+  height: 100px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #1d1e23;
+}
+
+.promo-image {
+  width: 40%;
+  height: 100%;
+  flex: 0 0 40%;
+  object-fit: cover;
+}
+
+.promo-copy {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  padding: 0 14px 0 24px;
+  font-size: 14px;
+  line-height: 17px;
+}
+
+.promo-copy p {
+  margin: 0;
+  color: #9194a4;
+}
+
+.promo-copy strong {
+  color: #fff;
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.dismiss-promo {
+  position: absolute;
+  top: 7px;
+  right: 10px;
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #777b88;
+  font-size: 24px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.promo-pagination {
+  display: flex;
+  height: 26px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.promo-pagination i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #5d6070;
+}
+
+.promo-pagination i:first-child {
+  width: 6px;
+  height: 6px;
+}
+
+.promo-pagination i.active {
+  width: 6px;
+  height: 6px;
+  background: #0097fd;
+  box-shadow: 0 0 8px rgb(0 151 253 / 50%);
+}
+
+.promo-pagination i:nth-child(n + 3) {
+  width: 3px;
+  height: 3px;
+}
+
+.role-switcher {
+  display: flex;
+  height: 44px;
+  gap: 4px;
+  padding: 6px 16px;
+  background: #1d1e23;
+}
+
+.role-switcher button {
+  min-width: 0;
+  flex: 1 1 50%;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 6px;
+  background: #121315;
+  color: #9194a4;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.role-switcher button.active {
+  background: #3a3b3f;
+  color: #fff;
+}
+
+.community-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 16px 24px;
+  background: #000;
+}
+
+.community-card {
+  display: flex;
+  width: 100%;
+  min-height: 72px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+  border: 0;
+  border-radius: 6px;
+  background: #1d1e23;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.community-card h2 {
+  min-width: 0;
+  margin: 0;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 32px;
+}
+
+.community-card svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  fill: none;
+  stroke: #0097fd;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.list-message {
+  margin: 0;
+  padding: 20px 4px;
+  color: #9194a4;
+  font-size: 14px;
+  text-align: center;
+}
+
+.error-message {
+  color: #ff9d9d;
+}
+
+.home-indicator {
+  position: absolute;
+  z-index: 3;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: grid;
+  height: 34px;
+  place-items: center;
+  background: #000;
+}
+
+.home-indicator span {
+  width: 149px;
+  height: 5px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  background: #fff;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+@media (max-width: 599px) {
+  .communities-screen {
+    width: 100%;
+    max-width: none;
+    border-radius: 0;
+  }
+}

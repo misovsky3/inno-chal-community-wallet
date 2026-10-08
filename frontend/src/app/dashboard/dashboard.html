@@ -1,0 +1,155 @@
+<main class="dashboard-screen">
+  <header class="app-header">
+    <div class="status-bar" aria-label="Čas 4:20, mobilný signál, Wi-Fi, batéria">
+      <span>4:20</span>
+      <span class="status-icons" aria-hidden="true">
+        <img src="assets/icons/mobile-signal-icon.svg" alt="" />
+        <img src="assets/icons/wifi-icon.svg" alt="" />
+        <img src="assets/icons/battery-icon.svg" alt="" />
+      </span>
+    </div>
+    <div class="toolbar">
+      <button class="icon-button toolbar-mail" type="button" aria-label="Správy" routerLink="/function-unavailable">
+        <img src="assets/icons/email-button-icon.svg" alt="" />
+      </button>
+      <span class="brand-mark" aria-label="Tatra banka">
+        <img src="assets/icons/tb-icon.svg" alt="" />
+      </span>
+      <div class="toolbar-actions">
+        <button class="icon-button" type="button" aria-label="Zavolať" routerLink="/function-unavailable">
+          <img src="assets/icons/phone-icon.svg" alt="" />
+        </button>
+        <button class="icon-button" type="button" aria-label="Upraviť" routerLink="/function-unavailable">
+          <img src="assets/icons/edit-icon.svg" alt="" />
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="dashboard-content">
+
+    <section class="dashboard-section accounts-section" aria-labelledby="accounts-title">
+      <div class="section-heading">
+        <h1 id="accounts-title">Účty</h1>
+        <button type="button" class="text-action" routerLink="/function-unavailable">Zoznam účtov</button>
+      </div>
+      <div class="account-carousel">
+        @for (account of accounts; track account.iban) {
+          <article class="account-card">
+            <h2>{{ account.name }}</h2>
+            <p class="account-iban">{{ account.iban }}</p>
+            <div class="account-divider"></div>
+            <p class="balance-label">Aktuálny zostatok</p>
+            <p class="account-balance">{{ account.balance }} <span>EUR</span></p>
+            <svg class="balance-chart" viewBox="0 0 118 56" preserveAspectRatio="none" aria-hidden="true">
+              <path class="chart-grid" d="M0 8H118M0 24H118M0 40H118M0 55H118" />
+              <path class="chart-area" [attr.d]="account.chart + ' L117 56 L0 56 Z'" />
+              <path class="chart-line" [attr.d]="account.chart" />
+            </svg>
+          </article>
+        }
+      </div>
+      <div class="carousel-dots account-dots" aria-hidden="true"><i class="active"></i><i></i><i></i></div>
+    </section>
+
+    <section class="dashboard-section" aria-labelledby="family-title">
+      <div class="section-heading">
+        <h2 id="family-title">Rodičovská zóna</h2>
+      </div>
+      <div class="family-carousel">
+        <article class="family-card">
+          <div class="family-card-head"><strong>Janka</strong><span>220,00 <small>EUR</small></span></div>
+          <p>TABI vzdelávanie</p>
+          <div class="lesson"><span class="lesson-icon">✓</span><span>Kapitola 1.<strong>Výhody výmeny</strong></span><span class="lesson-arrow">›</span></div>
+          <div class="lesson"><span class="lesson-icon muted">2</span><span>Kapitola 2.<strong>Rozpočet</strong></span><span class="lesson-arrow">›</span></div>
+        </article>
+        <article class="family-card">
+          <div class="family-card-head"><strong>Ferko</strong><span>350,00 <small>EUR</small></span></div>
+          <p>TABI vzdelávanie</p>
+          <div class="lesson"><span class="lesson-icon">✓</span><span>Kapitola 1.<strong>Výhody výmeny</strong></span><span class="lesson-arrow">›</span></div>
+          <div class="lesson"><span class="lesson-icon muted">2</span><span>Kapitola 2.<strong>Rozpočet</strong></span><span class="lesson-arrow">›</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="dashboard-section spending-section" aria-labelledby="spending-title">
+      <div class="section-heading">
+        <h2 id="spending-title">Spending report</h2>
+        <button type="button" class="text-action" routerLink="/function-unavailable">Zobraziť detail</button>
+      </div>
+      <div class="spending-card">
+        <div class="spending-summary">
+          <span>Rozdiel</span>
+          <strong>+ 821,00 <small>EUR</small></strong>
+        </div>
+        <div class="spending-totals">
+          <div><span class="legend-dot expense"></span><span>Výdavky</span><strong>- 854,00 <small>EUR</small></strong></div>
+          <div><span class="legend-dot income"></span><span>Príjmy</span><strong>1 675,00 <small>EUR</small></strong></div>
+        </div>
+        <div class="spending-visual">
+          <div class="donut-chart" role="img" aria-label="Rozdelenie výdavkov podľa kategórie">
+            <span class="chart-percent percent-one">23%</span>
+            <span class="chart-percent percent-two">15%</span>
+            <span class="chart-percent percent-three">25%</span>
+            <span class="chart-percent percent-four">27%</span>
+            <span class="chart-percent percent-five">10%</span>
+          </div>
+          <div class="spending-legend">
+            <div><i class="jewelry"></i><span>Šperky</span></div>
+            <div><i class="furniture"></i><span>Nábytok</span></div>
+            <div><i class="savings"></i><span>Na sporenie</span></div>
+            <div><i class="gifts"></i><span>Darčeky</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="dashboard-section cards-section" aria-labelledby="cards-title">
+      <div class="section-heading">
+        <h2 id="cards-title">Karty</h2>
+        <button type="button" class="text-action" routerLink="/function-unavailable">Zoznam kariet</button>
+      </div>
+      <div class="cards-carousel">
+        <div class="payment-card" aria-hidden="true">
+          <span class="card-chip"></span>
+          <span class="card-art"></span>
+        </div>
+        <button class="add-card" type="button" routerLink="/function-unavailable"><span>+</span>Pridať novú kartu</button>
+      </div>
+      <div class="card-pagination" aria-hidden="true"><i class="active"></i><i></i><i></i></div>
+      <div class="card-information">
+        <div class="card-name">Moja debetná karta<p>4337 11** **** 1234</p></div>
+        <div class="card-balance"><strong>1 230,04 <small>EUR</small></strong><span>Disponibilný zostatok</span></div>
+      </div>
+      <div class="card-footer-actions">
+        <button type="button" routerLink="/function-unavailable">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5h18v13H3zM3 10h18M8 3.5v6m8-6v6M8 15h3" /></svg>
+          <span>Internetová platba</span>
+        </button>
+        <button type="button" routerLink="/function-unavailable">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" /></svg>
+          <span>Benefity karty</span>
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <nav class="bottom-navigation" aria-label="Hlavná navigácia">
+    <button type="button" class="bottom-item active" aria-label="Domov" aria-current="page">
+      <img class="bottom-item-composite-icon" src="assets/icons/home-icon.svg" alt="" />
+    </button>
+    <button type="button" class="bottom-item" aria-label="Pohyby" routerLink="/function-unavailable">
+      <img class="bottom-item-composite-icon" src="assets/icons/transactions-icon.svg" alt="" />
+    </button>
+    <button type="button" class="bottom-item" aria-label="Platba" routerLink="/function-unavailable">
+      <img class="bottom-item-composite-icon" src="assets/icons/payment-icon.svg" alt="" />
+    </button>
+    <button type="button" class="bottom-item" aria-label="Moje komunity" routerLink="/communities-list" queryParamsHandling="preserve">
+      <img class="bottom-item-composite-icon" src="assets/icons/my-communities-icon.svg" alt="" />
+    </button>
+    <button type="button" class="bottom-item" routerLink="/function-unavailable">
+      <img src="assets/icons/menu-icon.svg" alt="" /><span>Viac</span>
+    </button>
+  </nav>
+  <div class="home-indicator" aria-hidden="true"><span></span></div>
+</main>

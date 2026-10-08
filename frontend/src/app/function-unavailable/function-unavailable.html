@@ -1,0 +1,32 @@
+<div class="community-modal-backdrop">
+  <main
+    class="community-dashboard"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="unavailable-title"
+  >
+    <header class="dashboard-header">
+      <div class="status-bar" aria-label="Čas 4:20, mobilný signál, Wi-Fi, batéria">
+        <span>4:20</span>
+        <span class="status-icons" aria-hidden="true">
+          <img src="assets/icons/mobile-signal-icon.svg" alt="" />
+          <img src="assets/icons/wifi-icon.svg" alt="" />
+          <img src="assets/icons/battery-icon.svg" alt="" />
+        </span>
+      </div>
+      <div class="dashboard-toolbar">
+        <button class="back-button" type="button" aria-label="Späť" (click)="goBack()">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4-8 8 8 8" /></svg>
+        </button>
+        <h1 id="unavailable-title">Moje komunity</h1>
+        <span aria-hidden="true"></span>
+      </div>
+    </header>
+
+    <section class="dashboard-content">
+      <p class="unavailable-message">Táto funkcionalita je momentálne nedostupná</p>
+    </section>
+
+    <div class="home-indicator" aria-hidden="true"><span></span></div>
+  </main>
+</div>

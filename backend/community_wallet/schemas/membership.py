@@ -5,7 +5,13 @@ from pydantic import BaseModel
 from .user import User
 
 
-MembershipRole = Literal["admin", "read_only"]
+MembershipRole = Literal[
+    "admin",
+    "disponent",
+    "payment_preparer",
+    "controller",
+    "read_only",
+]
 
 
 class Membership(BaseModel):

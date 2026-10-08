@@ -1,0 +1,107 @@
+<main class="phone-screen">
+  <div class="background-art" aria-hidden="true"></div>
+  <div class="background-shade" aria-hidden="true"></div>
+  @if (authenticating) {
+    <app-faceid-spinner />
+  }
+
+  <header class="top-area">
+    <div class="status-bar" aria-label="Čas 9:41, mobilný signál, Wi-Fi, batéria">
+      <span>9:41</span>
+      <span class="status-icons" aria-hidden="true">
+        <img src="assets/icons/mobile-signal-icon.svg" alt="" />
+        <img src="assets/icons/wifi-icon.svg" alt="" />
+        <img src="assets/icons/battery-icon.svg" alt="" />
+      </span>
+    </div>
+    <button class="help-button" type="button" aria-label="Pomoc" routerLink="/function-unavailable">?</button>
+    <div class="brand" aria-label="Tatra banka">
+      <svg class="brand-logo" viewBox="45 46.5 97 98" fill="none" aria-hidden="true">
+        <path
+          d="M75.4634 134.693C77.2607 134.693 78.4204 135.818 78.4204 137.469C78.4204 138.403 77.9247 139.368 77.0054 139.821C77.7268 140.185 77.9961 140.858 78.0806 141.662L78.2505 143.238C78.2927 143.603 78.4627 144.174 78.6606 144.48H76.6519C76.4531 144.189 76.3968 143.823 76.3687 143.516L76.2563 142.274C76.1429 141.106 75.7617 140.637 74.5161 140.637H72.436V144.479H70.5688V134.693H75.4634ZM52.6714 136.328H49.7983V144.479H47.8892V136.328H45.0171V134.692H52.6714V136.328ZM62.0093 144.479H59.9575L59.1509 142.201H55.0054L54.2124 144.479H52.1606L55.8687 134.693H58.3013L62.0093 144.479ZM69.1538 136.328H66.2817V144.479H64.3726V136.328H61.4995V134.692H69.1538V136.328ZM89.1313 144.479H87.0806L86.2729 142.201H82.1274L81.3354 144.479H79.2827L82.9897 134.693H85.4233L89.1313 144.479ZM97.9731 134.693C99.6709 134.693 100.76 135.759 100.76 137.351C100.76 138.11 100.42 138.884 99.7983 139.352C100.675 139.79 101.157 140.755 101.157 141.676C101.157 143.355 99.997 144.479 98.1997 144.479H93.2759V134.693H97.9731ZM111.626 144.479H109.576L108.768 142.201H104.623L103.831 144.479H101.779L105.486 134.693H107.919L111.626 144.479ZM119.055 141.559V134.693H120.922V144.479H118.815L114.669 137.701V144.479H112.801V134.693H114.895L119.055 141.559ZM125.296 138.928L129.513 134.692H132.03L128.182 138.593L131.606 144.479H129.229L126.724 140.039L125.295 141.47V144.479H123.427V144.478L123.428 134.692H125.296V138.928ZM141.677 144.479H139.626L138.819 142.201H134.673L133.882 144.479H131.83L135.537 134.693H137.97L141.677 144.479ZM95.144 142.815H97.8188C98.6677 142.815 99.2054 142.347 99.2056 141.545C99.2056 140.814 98.6678 140.317 97.8188 140.317H95.144V142.815ZM55.5845 140.55H58.5562L57.0562 136.313L55.5845 140.55ZM82.7075 140.55H85.6782L84.1782 136.313L82.7075 140.55ZM105.204 140.55H108.174L106.674 136.313L105.204 140.55ZM135.284 140.55H138.255L136.755 136.313L135.284 140.55ZM72.436 138.987H75.0249C75.9302 138.987 76.4819 138.491 76.4819 137.658C76.4817 136.825 75.93 136.329 75.0249 136.329H72.436V138.987ZM95.144 138.666H97.521C98.3418 138.666 98.8373 138.228 98.8374 137.498C98.8374 136.767 98.3418 136.329 97.521 136.329H95.144V138.666ZM98.772 48.1472H46.5903L46.6733 124.002H140.103V48.1472H125.857V46.5222H141.677V125.627H45.0171V46.5222H98.772V48.1472ZM67.4634 114.937H55.4536L79.4106 68.4148H91.4214L67.4634 114.937ZM84.4429 114.937H72.4331L107.666 46.5222H119.675L84.4429 114.937ZM130.93 57.6394L101.422 114.937H89.4126L118.919 57.6394H130.93Z"
+          fill="currentColor"
+        />
+      </svg>
+    </div>
+  </header>
+
+  <section class="welcome-panel" aria-labelledby="welcome-title">
+    <h1 id="welcome-title">
+      Vitajte vo svete<br />
+      <strong>inovatívneho bankovníctva</strong>
+    </h1>
+
+    <div class="welcome-actions">
+      <label class="profile-picker">
+        <span>Používateľ</span>
+        <select
+          [value]="selectedUserId ?? ''"
+          [disabled]="loadingUsers || loadError || users.length === 0 || authenticating"
+          (change)="onUserChange($event)"
+          aria-label="Vyberte používateľa"
+        >
+          @for (user of users; track user.id) {
+            <option [value]="user.id">{{ user.name }} ({{ user.email }})</option>
+          }
+        </select>
+      </label>
+      @if (loadingUsers) {
+        <p class="user-list-status" role="status">Načítavam používateľov…</p>
+      } @else if (loadError) {
+        <p class="user-list-status" role="alert">Používateľov sa nepodarilo načítať.</p>
+      } @else if (users.length === 0) {
+        <p class="user-list-status" role="alert">Nie sú dostupní žiadni používatelia.</p>
+      }
+      <button
+        class="primary-button"
+        type="button"
+        [disabled]="authenticating || loadingUsers || loadError || selectedUserId === null"
+        (click)="login()"
+      >
+        Prihlásiť sa
+      </button>
+      <button class="secondary-button" type="button" routerLink="/function-unavailable">
+        Som tu prvýkrát
+      </button>
+    </div>
+  </section>
+
+  <footer class="bottom-area">
+    <p class="version-copy">
+      Aktuálny bankový deň: <strong>03.05.2019</strong><br />
+      Version 2.15.0-4837
+    </p>
+    <nav class="bottom-navigation" aria-label="Hlavná navigácia">
+      <div class="bottom-item">
+        <img src="assets/icons/compass-icon.svg" alt="" aria-hidden="true" />
+        <span>Výber z<br />bankomatu</span>
+      </div>
+      <div class="bottom-item">
+        <img src="assets/icons/adam-icon.svg" alt="" aria-hidden="true" />
+        <span>Pobočky<br />a bankomaty</span>
+      </div>
+      <div class="bottom-item">
+        <img src="assets/icons/withdraw-icon.svg" alt="" aria-hidden="true" />
+        <span>kurzový<br />lístok</span>
+      </div>
+      <div class="bottom-item">
+        <img src="assets/icons/stocks-icon.svg" alt="" aria-hidden="true" />
+        <span>Online<br />chat</span>
+      </div>
+      <div class="bottom-item">
+        <img src="assets/icons/menu-icon.svg" alt="" aria-hidden="true" />
+        <span>Viac<br />možností</span>
+      </div>
+    </nav>
+    <div class="home-indicator" aria-hidden="true"><span></span></div>
+  </footer>
+</main>
+
+@if (joinModalOpen && invitationToken && selectedUserId !== null) {
+  <app-join-community-modal
+    [token]="invitationToken"
+    [userId]="selectedUserId"
+    (declined)="joinModalOpen = false"
+    (joined)="onInvitationJoined($event)"
+  />
+}

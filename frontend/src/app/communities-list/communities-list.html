@@ -1,0 +1,114 @@
+<main class="communities-screen">
+  <header class="communities-header">
+    <div class="status-bar" aria-label="Čas 4:20, mobilný signál, Wi-Fi, batéria">
+      <span>4:20</span>
+      <span class="status-icons" aria-hidden="true">
+        <img src="assets/icons/mobile-signal-icon.svg" alt="" />
+        <img src="assets/icons/wifi-icon.svg" alt="" />
+        <img src="assets/icons/battery-icon.svg" alt="" />
+      </span>
+    </div>
+    <div class="communities-toolbar">
+      <a class="back-button" routerLink="/dashboard" queryParamsHandling="preserve" aria-label="Späť na hlavnú obrazovku">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4-8 8 8 8" /></svg>
+      </a>
+      <h1>Moje komunity</h1>
+      <button class="add-community-button" type="button" aria-label="Pridať komunitu" routerLink="/function-unavailable">+</button>
+    </div>
+    <label class="community-search">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="10.8" cy="10.8" r="6.3" />
+        <path d="m15.5 15.5 5 5" />
+      </svg>
+      <input
+        type="search"
+        placeholder="Hľadať"
+        aria-label="Hľadať komunitu"
+        (input)="onSearch($event)"
+      />
+    </label>
+  </header>
+
+  <div class="communities-content">
+    <section
+      class="promo-section"
+      [class.promo-hidden]="!promoVisible"
+      aria-label="Ponuka"
+    >
+      @if (promoVisible) {
+        <article class="promo-card">
+          <img class="promo-image" src="assets/communities-promo.png" alt="" />
+          <div class="promo-copy">
+            <p>Navýšenie</p>
+            <strong>Voliteľného prečerpania</strong>
+            <p>získate rýchlo a jednoducho</p>
+          </div>
+          <button
+            class="dismiss-promo"
+            type="button"
+            aria-label="Zavrieť ponuku"
+            (click)="promoVisible = false"
+          >×</button>
+        </article>
+        <div class="promo-pagination" aria-hidden="true">
+          <i class="active"></i><i></i><i></i><i></i>
+        </div>
+      }
+    </section>
+
+    <div class="role-switcher" role="tablist" aria-label="Typ komunity">
+      <button
+        type="button"
+        role="tab"
+        [attr.aria-selected]="selectedRole === 'admin'"
+        [class.active]="selectedRole === 'admin'"
+        (click)="selectedRole = 'admin'"
+      >Správca</button>
+      <button
+        type="button"
+        role="tab"
+        [attr.aria-selected]="selectedRole === 'member'"
+        [class.active]="selectedRole === 'member'"
+        (click)="selectedRole = 'member'"
+      >Člen</button>
+    </div>
+
+    <section class="community-list" aria-label="Zoznam komunít" aria-live="polite">
+      @if (loading) {
+        <p class="list-message">Načítavam komunity…</p>
+      } @else if (loadError) {
+        <p class="list-message error-message">Komunity sa nepodarilo načítať.</p>
+      } @else {
+        @for (account of filteredAccounts; track account.id) {
+          <button class="community-card" type="button" (click)="openCommunity(account)">
+            <h2>{{ account.name }}</h2>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m9 4 8 8-8 8" />
+            </svg>
+          </button>
+        } @empty {
+          <p class="list-message">Nenašli sa žiadne komunity.</p>
+        }
+      }
+    </section>
+  </div>
+
+  <div class="home-indicator" aria-hidden="true"><span></span></div>
+
+  @if (activeCommunity; as community) {
+    <app-my-community-dashboard
+      [accountId]="community.id"
+      [communityRole]="community.role"
+      (closed)="closeCommunity()"
+      (addMemberRequested)="inviteOpen = true"
+    />
+    @if (inviteOpen && currentUserId !== null) {
+      <app-my-community-invite-screen
+        [accountId]="community.id"
+        [communityName]="community.name"
+        [createdByUserId]="currentUserId"
+        (closed)="closeInvite()"
+      />
+    }
+  }
+</main>

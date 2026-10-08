@@ -58,7 +58,7 @@ def _to_info(row: dict[str, str]) -> InvitationInfo:
     return InvitationInfo(
         token=row["token"],
         account_id=int(row["account_id"]),
-        role="read_only",
+        role=row["role"],
         expires_at=datetime.fromisoformat(row["expires_at"]),
         uses_remaining=int(row["max_uses"]) - int(row["used_count"]),
         invite_path=f"/join/{row['token']}",
@@ -86,7 +86,7 @@ def create_invitation(
     row = {
         "token": secrets.token_urlsafe(32),
         "account_id": str(account_id),
-        "role": "read_only",
+        "role": request.role,
         "created_by_user_id": str(request.created_by_user_id),
         "created_at": now.isoformat(),
         "expires_at": (now + timedelta(hours=request.expires_in_hours)).isoformat(),
@@ -130,7 +130,7 @@ def accept_invitation(
             {
                 "account_id": str(account_id),
                 "user_id": str(request.user_id),
-                "role": "read_only",
+                "role": row["role"],
             }
         )
         MEMBERSHIPS_STORE.write_all(memberships)
@@ -141,7 +141,7 @@ def accept_invitation(
     return InvitationJoinResult(
         account_id=account_id,
         user_id=request.user_id,
-        role="read_only",
+        role=row["role"],
         message="User joined the demo account",
     )
 

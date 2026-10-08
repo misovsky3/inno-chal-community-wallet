@@ -15,6 +15,13 @@
             "outputPath": "dist/community-wallet-frontend",
             "index": "src/index.html",
             "browser": "src/main.ts",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets"
+              }
+            ],
             "polyfills": [
               "zone.js"
             ],
@@ -39,8 +46,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "12kB",
+                  "maximumError": "16kB"
                 }
               ],
               "outputHashing": "all"

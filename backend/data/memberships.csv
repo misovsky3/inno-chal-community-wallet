@@ -9,3 +9,5 @@ account_id,user_id,role
 3,4,admin
 4,1,read_only
 4,5,admin
+1,4,payment_preparer
+1,5,disponent

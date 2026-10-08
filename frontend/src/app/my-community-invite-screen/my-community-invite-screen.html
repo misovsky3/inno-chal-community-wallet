@@ -1,0 +1,125 @@
+<div class="invite-backdrop">
+  <main
+    class="invite-screen"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="invite-title"
+  >
+    <header class="invite-header">
+      <div class="status-bar" aria-label="Čas 4:20, mobilný signál, Wi-Fi, batéria">
+        <span>4:20</span>
+        <span class="status-icons" aria-hidden="true">
+          <img src="assets/icons/mobile-signal-icon.svg" alt="" />
+          <img src="assets/icons/wifi-icon.svg" alt="" />
+          <img src="assets/icons/battery-icon.svg" alt="" />
+        </span>
+      </div>
+      <div class="invite-toolbar">
+        <button class="back-button" type="button" aria-label="Späť" (click)="closed.emit()">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4-8 8 8 8" /></svg>
+        </button>
+        <h1 id="invite-title">Pridať člena</h1>
+        <span aria-hidden="true"></span>
+      </div>
+    </header>
+
+    <section class="invite-content" aria-live="polite">
+      <h2>{{ communityName() }}</h2>
+
+      @if (qrCodeDataUrl; as qrCode) {
+        <div class="generated-invite">
+          <div class="qr-card">
+            <img [src]="qrCode" alt="QR kód na pripojenie ku komunite" />
+          </div>
+          <h3>QR kód bol vygenerovaný</h3>
+          <p>
+            Zdieľajte tento QR kód s novým členom, aby sa mohol jednoducho
+            pripojiť do komunity.
+          </p>
+        </div>
+      } @else {
+        <button
+          class="permission-row"
+          type="button"
+          aria-haspopup="dialog"
+          [attr.aria-expanded]="roleSheetOpen"
+          (click)="openRoleSheet()"
+        >
+          <span>Priradiť oprávnenia</span>
+          <span class="permission-value">{{ selectedRoleLabel }}</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m9 4 8 8-8 8" />
+          </svg>
+        </button>
+      }
+
+      @if (actionError) {
+        <p class="action-message error-message" role="alert">{{ actionError }}</p>
+      } @else if (shareMessage) {
+        <p class="action-message" role="status">{{ shareMessage }}</p>
+      }
+    </section>
+
+    <button
+      class="primary-action"
+      type="button"
+      [disabled]="generating || (!qrCodeDataUrl && selectedRole === null)"
+      [class.is-generating]="generating"
+      (click)="qrCodeDataUrl ? shareQrCode() : generateQrCode()"
+    >
+      @if (generating) {
+        <span class="loading-indicator" aria-hidden="true"></span>
+        <span>Generujem QR kód…</span>
+      } @else {
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M4 3v20M8 3v20M12 3v11M16 3v7M6 27h22V15H6z" />
+          <path d="M11 18h3M20 19h5v5h-5z" />
+        </svg>
+        <span>{{ qrCodeDataUrl ? 'Zdieľať QR kód' : 'Generovať QR kód' }}</span>
+      }
+    </button>
+
+    <div class="home-indicator" aria-hidden="true"><span></span></div>
+
+    @if (roleSheetOpen) {
+      <div class="role-sheet-backdrop" (click)="cancelRoleSheet()">
+        <section
+          class="role-sheet"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="role-sheet-title"
+          (click)="$event.stopPropagation()"
+        >
+          <header class="role-sheet-header">
+            <button type="button" (click)="cancelRoleSheet()">Zrušiť</button>
+            <h2 id="role-sheet-title">Priradiť oprávnenia</h2>
+            <span aria-hidden="true"></span>
+          </header>
+          <div class="role-options" role="radiogroup" aria-label="Oprávnenia člena">
+            @for (option of roles; track option.role) {
+              <button
+                class="role-option"
+                type="button"
+                role="radio"
+                [attr.aria-checked]="sheetSelectedRole === option.role"
+                (click)="selectRole(option.role)"
+              >
+                <span class="radio-mark" [class.selected]="sheetSelectedRole === option.role">
+                  @if (sheetSelectedRole === option.role) {
+                    <svg viewBox="0 0 20 20" aria-hidden="true">
+                      <path d="m4 10 4 4 8-9" />
+                    </svg>
+                  }
+                </span>
+                <span class="role-copy">
+                  <span class="role-label">{{ option.label }}</span>
+                  <span class="role-description">{{ option.description }}</span>
+                </span>
+              </button>
+            }
+          </div>
+        </section>
+      </div>
+    }
+  </main>
+</div>
