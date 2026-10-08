@@ -44,7 +44,7 @@ jobs:
 
       - name: Install frontend dependencies
         working-directory: frontend
-        run: npm ci
+        run: npm ci --registry=https://registry.npmjs.org/
 
       - name: Configure production API URL
         working-directory: frontend
