@@ -77,6 +77,9 @@ jobs:
           REPOSITORY: ${{ github.event.repository.name }}
         run: npm run build -- --configuration production --base-href "/${REPOSITORY}/"
 
+      - name: Add GitHub Pages SPA fallback
+        run: cp frontend/dist/community-wallet-frontend/browser/index.html frontend/dist/community-wallet-frontend/browser/404.html
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 

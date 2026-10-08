@@ -105,10 +105,8 @@ export class MyCommunityInviteScreen {
       )
       .subscribe({
         next: (invitation) => {
-        const url = new URL(
-          invitation.invite_path,
-          window.location.origin,
-        ).toString();
+        const invitePath = invitation.invite_path.replace(/^\/+/, '');
+        const url = new URL(invitePath, document.baseURI).toString();
           this.inviteUrl = url;
           this.changeDetector.markForCheck();
           QRCode.toDataURL(url, {
