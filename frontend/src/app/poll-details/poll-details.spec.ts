@@ -69,6 +69,15 @@ describe('PollDetails', () => {
     expect(fixture.nativeElement.querySelector('.primary-action').disabled).toBeTrue();
   });
 
+  it('allows selecting an option before voting', () => {
+    const option = fixture.nativeElement.querySelector('input[name="poll-vote"]') as HTMLInputElement;
+    option.click();
+    fixture.detectChanges();
+
+    expect(component.selectedOptionId).toBe(1);
+    expect(fixture.nativeElement.querySelector('.primary-action').disabled).toBeFalse();
+  });
+
   it('loads an existing vote and prevents submitting another one', () => {
     const votedPoll = { ...poll, user_has_voted: true };
     const votedFixture = TestBed.createComponent(PollDetails);
@@ -79,6 +88,10 @@ describe('PollDetails', () => {
     votedFixture.detectChanges();
 
     expect(votedComponent.hasVoted).toBeTrue();
+    expect(votedFixture.nativeElement.querySelector('.vote-already-cast').textContent).toContain(
+      'Už ste v tomto hlasovaní hlasovali',
+    );
+    expect(votedFixture.nativeElement.querySelector('input[name="poll-vote"]').disabled).toBeTrue();
     expect(votedFixture.nativeElement.querySelector('.primary-action').disabled).toBeTrue();
   });
 });

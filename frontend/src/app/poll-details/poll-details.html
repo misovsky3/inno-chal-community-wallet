@@ -80,6 +80,11 @@
       <section class="vote-section" aria-labelledby="vote-heading">
         <h2 id="vote-heading">Váš hlas</h2>
         <p class="section-description">{{ poll().question }}</p>
+        @if (hasVoted) {
+          <p class="vote-already-cast" role="status">
+            Už ste v tomto hlasovaní hlasovali. Možnosti výberu sú uzamknuté.
+          </p>
+        }
         <form (submit)="submitVote($event)">
           <div class="vote-options" role="radiogroup" aria-label="Možnosti hlasovania">
             @for (option of poll().options; track option.id) {
@@ -114,9 +119,9 @@
             }
           </div>
 
-          <p class="vote-hint">
-            {{ hasVoted ? 'Váš hlas už bol odoslaný.' : 'Vyberte jednu možnosť a potvrďte svoj hlas.' }}
-          </p>
+          @if (!hasVoted) {
+            <p class="vote-hint">Vyberte jednu možnosť a potvrďte svoj hlas.</p>
+          }
           @if (errorMessage) {
             <p class="vote-message vote-error" role="alert">{{ errorMessage }}</p>
           }
