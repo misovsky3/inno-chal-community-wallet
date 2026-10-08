@@ -77,6 +77,16 @@ jobs:
           REPOSITORY: ${{ github.event.repository.name }}
         run: npm run build -- --configuration production --base-href "/${REPOSITORY}/"
 
+      - name: Verify API URL in production bundle
+        working-directory: frontend
+        env:
+          API_BASE_URL: ${{ vars.API_BASE_URL }}
+        run: |
+          if ! grep -R -F -- "$API_BASE_URL" dist/community-wallet-frontend/browser/*.js; then
+            echo "Render API URL was not included in the production bundle." >&2
+            exit 1
+          fi
+
       - name: Add GitHub Pages SPA fallback
         run: cp frontend/dist/community-wallet-frontend/browser/index.html frontend/dist/community-wallet-frontend/browser/404.html
 
