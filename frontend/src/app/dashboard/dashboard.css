@@ -54,6 +54,7 @@
   height: 44px;
   align-items: center;
   justify-content: center;
+  padding-top: 8px;
 }
 
 .icon-button {
@@ -119,7 +120,7 @@
 
 .dashboard-content {
   position: absolute;
-  inset: 89px 0 84px;
+  inset: 89px 0 50px;
   overflow-x: hidden;
   overflow-y: auto;
   background: #1d1e23;
@@ -1194,13 +1195,13 @@
   position: absolute;
   z-index: 3;
   right: 0;
-  bottom: 34px;
+  bottom: 0;
   left: 0;
   display: flex;
   height: 50px;
   align-items: flex-start;
   justify-content: space-between;
-  padding-top: 3px;
+  padding-top: 8px;
   background: #1d1e23;
 }
 
