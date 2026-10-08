@@ -42,7 +42,18 @@ jobs:
 
       - name: Install frontend dependencies
         working-directory: frontend
-        run: npm ci --registry=https://registry.npmjs.org/
+        run: |
+          npm --version
+          npm ci --registry=https://registry.npmjs.org/ --loglevel=verbose
+
+      - name: Upload npm debug log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-debug-log
+          path: /home/runner/.npm/_logs/*-debug-0.log
+          if-no-files-found: warn
+          retention-days: 7
 
       - name: Configure production API URL
         working-directory: frontend
