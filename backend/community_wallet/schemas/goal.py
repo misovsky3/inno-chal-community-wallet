@@ -9,6 +9,24 @@ GoalType = Literal["permanent", "temporary"]
 GoalStatus = Literal["in_progress", "completed", "expired"]
 
 
+class GoalCreateRequest(BaseModel):
+    created_by_user_id: int = Field(gt=0)
+    name: str = Field(min_length=1, max_length=240)
+    target_amount: Decimal = Field(gt=0, max_digits=12, decimal_places=2)
+    end_date: date
+    description: Optional[str] = Field(default=None, max_length=4000)
+
+    @field_validator("name", mode="before")
+    @classmethod
+    def trim_name(cls, value: object) -> object:
+        return value.strip() if isinstance(value, str) else value
+
+    @field_validator("description", mode="before")
+    @classmethod
+    def empty_description_is_none(cls, value: object) -> object:
+        return None if value == "" else value
+
+
 class Goal(BaseModel):
     id: int
     account_id: int

@@ -11,6 +11,11 @@
   box-sizing: border-box;
 }
 
+.status-bar,
+.home-indicator {
+  display: none !important;
+}
+
 html,
 body,
 app-root {

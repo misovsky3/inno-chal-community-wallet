@@ -96,12 +96,3 @@
     <div class="home-indicator" aria-hidden="true"><span></span></div>
   </footer>
 </main>
-
-@if (joinModalOpen && invitationToken && selectedUserId !== null) {
-  <app-join-community-modal
-    [token]="invitationToken"
-    [userId]="selectedUserId"
-    (declined)="joinModalOpen = false"
-    (joined)="onInvitationJoined($event)"
-  />
-}

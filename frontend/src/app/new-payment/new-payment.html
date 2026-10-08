@@ -1,0 +1,141 @@
+<div class="payment-backdrop">
+  <main
+    class="payment-screen"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="payment-title"
+  >
+    <header class="payment-header">
+      <div class="status-bar" aria-label="Čas 4:20, mobilný signál, Wi-Fi, batéria">
+        <span>4:20</span>
+        <span class="status-icons" aria-hidden="true">
+          <img src="assets/icons/mobile-signal-icon.svg" alt="" />
+          <img src="assets/icons/wifi-icon.svg" alt="" />
+          <img src="assets/icons/battery-icon.svg" alt="" />
+        </span>
+      </div>
+      <div class="payment-toolbar">
+        <button class="back-button" type="button" aria-label="Zavrieť" (click)="closed.emit()">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4-8 8 8 8" /></svg>
+        </button>
+        <h1 id="payment-title">{{ isContribution ? 'Príspevok' : 'Platba' }}</h1>
+        <span aria-hidden="true"></span>
+      </div>
+    </header>
+
+    <form class="payment-content" (submit)="submit($event)">
+      <div class="payment-scroll-area">
+        @if (!isContribution) {
+          <section class="payer-section" aria-label="Platiteľ">
+            <div class="payer-row">
+              <span>Platiteľ</span>
+              <strong>{{ account().name }}</strong>
+            </div>
+            <div class="payer-row iban-row">
+              <span>IBAN</span>
+              <strong>{{ account().iban || 'IBAN nie je dostupný' }}</strong>
+            </div>
+            <div class="payer-row balance-row">
+              <span>Aktuálny zostatok</span>
+              <strong>{{ formatMoney(account().balance) }} <small>{{ account().currency }}</small></strong>
+            </div>
+            <div class="payer-divider"></div>
+            <p class="payer-account-label">Účet organizácie</p>
+          </section>
+        }
+
+        <section class="form-section recipient-section">
+          <h2>Príjemca</h2>
+          <label class="field-card">
+            <span class="visually-hidden">Meno príjemcu</span>
+            <input
+              name="recipientName"
+              [value]="recipientName"
+              (input)="onTextInput('recipientName', $event)"
+              [readonly]="isContribution"
+              placeholder="Meno príjemcu"
+              autocomplete="organization"
+              required
+            />
+          </label>
+          <label class="field-card iban-field">
+            <span>IBAN <b>*</b></span>
+            <input
+              name="recipientIban"
+              [value]="recipientIban"
+              (input)="onTextInput('recipientIban', $event)"
+              [readonly]="isContribution"
+              placeholder="SK00 0000 0000 0000 0000 0000"
+              autocomplete="off"
+              required
+            />
+          </label>
+        </section>
+
+        <section class="form-section amount-section" aria-label="Suma a splatnosť">
+          <label class="field-card compact-field">
+            <span>Suma <b>*</b></span>
+            <span class="amount-input">
+              <input
+                name="amount"
+                [value]="amount"
+                (input)="onTextInput('amount', $event)"
+                type="number"
+                min="0.01"
+                step="0.01"
+                placeholder="0,00"
+                required
+              />
+              <span>{{ account().currency }}</span>
+            </span>
+          </label>
+          <label class="field-card compact-field">
+            <span>Dátum splatnosti <b>*</b></span>
+            <input
+              name="paymentDate"
+              [value]="paymentDate"
+              (input)="onTextInput('paymentDate', $event)"
+              type="date"
+              required
+            />
+          </label>
+        </section>
+
+        <section class="form-section other-section">
+          <h2>Ostatné údaje</h2>
+          <label class="field-card">
+            <span class="visually-hidden">Variabilný symbol</span>
+            <input name="variableSymbol" [value]="variableSymbol" (input)="onTextInput('variableSymbol', $event)" placeholder="Variabilný symbol" inputmode="numeric" />
+          </label>
+          <label class="field-card">
+            <span class="visually-hidden">Špecifický symbol</span>
+            <input name="specificSymbol" [value]="specificSymbol" (input)="onTextInput('specificSymbol', $event)" placeholder="Špecifický symbol" inputmode="numeric" />
+          </label>
+          <label class="field-card">
+            <span class="visually-hidden">Konštantný symbol</span>
+            <input name="constantSymbol" [value]="constantSymbol" (input)="onTextInput('constantSymbol', $event)" placeholder="Konštantný symbol" inputmode="numeric" />
+          </label>
+          <label class="field-card reference-field">
+            <span class="visually-hidden">Referencia platiteľa</span>
+            <textarea name="payerReference" [value]="payerReference" (input)="onTextInput('payerReference', $event)" placeholder="Referencia platiteľa" rows="2"></textarea>
+          </label>
+          <label class="field-card message-field">
+            <span>Informácia pre príjemcu</span>
+            <textarea name="recipientMessage" [value]="recipientMessage" (input)="onTextInput('recipientMessage', $event)" placeholder="Informácia pre príjemcu" rows="2"></textarea>
+          </label>
+        </section>
+
+        @if (errorMessage) {
+          <p class="payment-error" role="alert">{{ errorMessage }}</p>
+        }
+      </div>
+
+      <footer class="payment-footer">
+        <button class="confirm-button" type="submit" [disabled]="submitting">
+          {{ submitting ? 'Spracúvam…' : 'Potvrdiť platbu' }}
+        </button>
+        <div class="home-indicator" aria-hidden="true"><span></span></div>
+      </footer>
+    </form>
+  </main>
+</div>

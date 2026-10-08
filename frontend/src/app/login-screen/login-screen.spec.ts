@@ -55,15 +55,19 @@ describe('LoginScreen', () => {
     });
   }));
 
-  it('shows the join modal after logging in through an invitation', fakeAsync(() => {
+  it('opens the invitation on the dashboard after logging in', fakeAsync(() => {
     httpTestingController.expectOne('/api/users').flush([
       { id: 10, name: 'Jana N.', email: 'jana@example.com' },
     ]);
     component.invitationToken = 'invite-token';
+    const router = TestBed.inject(Router);
+    spyOn(router, 'navigate').and.resolveTo(true);
 
     component.login();
     tick(1800);
 
-    expect(component.joinModalOpen).toBeTrue();
+    expect(router.navigate).toHaveBeenCalledWith(['/dashboard'], {
+      queryParams: { userId: 10, invitationToken: 'invite-token' },
+    });
   }));
 });

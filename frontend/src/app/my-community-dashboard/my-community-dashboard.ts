@@ -10,13 +10,19 @@ import {
 } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import type { MembershipRole } from '../community-roles';
+import { CreateGoal } from '../create-goal/create-goal';
+import { CreatePoll } from '../create-poll/create-poll';
 import { FunctionUnavailable } from '../function-unavailable/function-unavailable';
+import { GoalDetails } from '../goal-details/goal-details';
+import { NewPayment, type PaymentDirection } from '../new-payment/new-payment';
+import { PollDetails } from '../poll-details/poll-details';
 import {
   MyCommunityDashboardService,
   type AccountDetails,
   type AccountMember,
   type GoalProgress,
   type Organization,
+  type PollResult,
   type Transaction,
 } from './my-community-dashboard.service';
 
@@ -37,13 +43,22 @@ interface MemberGroup {
 @Component({
   selector: 'app-my-community-dashboard',
   standalone: true,
-  imports: [FunctionUnavailable],
+  imports: [
+    CreateGoal,
+    CreatePoll,
+    FunctionUnavailable,
+    GoalDetails,
+    NewPayment,
+    PollDetails,
+  ],
   templateUrl: './my-community-dashboard.html',
   styleUrl: './my-community-dashboard.css',
 })
 export class MyCommunityDashboard implements OnInit {
   readonly accountId = input.required<number>();
   readonly communityRole = input.required<MembershipRole>();
+  readonly createdByUserId = input.required<number | null>();
+  readonly initialGoalId = input<number | null>(null);
   readonly closed = output<void>();
   readonly addMemberRequested = output<void>();
 
@@ -55,16 +70,27 @@ export class MyCommunityDashboard implements OnInit {
   transactions: Transaction[] = [];
   goals: GoalProgress[] = [];
   members: AccountMember[] = [];
+  polls: PollResult[] = [];
   selectedTab: DashboardTab = 'payments';
   searchTerm = '';
   memberSearchTerm = '';
   loading = true;
   loadError = false;
   functionUnavailableOpen = false;
+  createPollOpen = false;
+  createGoalOpen = false;
+  paymentDirection: PaymentDirection | null = null;
+  paymentGoalId: number | null = null;
+  selectedGoalId: number | null = null;
+  selectedPoll: PollResult | null = null;
 
   get communityHeading(): string {
     const role = this.communityRole() === 'admin' ? 'Správca' : 'Člen';
     return `${role} ${this.organizations[0]?.name ?? this.account?.name ?? ''}`.trim();
+  }
+
+  get paymentGoalName(): string {
+    return this.goals.find((goal) => goal.id === this.paymentGoalId)?.name ?? '';
   }
 
   get transactionGroups(): TransactionGroup[] {
@@ -128,6 +154,10 @@ export class MyCommunityDashboard implements OnInit {
       transactions: this.dashboardService.getTransactions(this.accountId()),
       goals: this.dashboardService.getGoals(this.accountId()),
       members: this.dashboardService.getMembers(this.accountId()),
+      polls: this.dashboardService.getPolls(
+        this.accountId(),
+        this.createdByUserId() ?? undefined,
+      ),
     }).subscribe({
       next: (data) => {
         this.account = data.account;
@@ -135,6 +165,8 @@ export class MyCommunityDashboard implements OnInit {
         this.transactions = data.transactions;
         this.goals = data.goals;
         this.members = data.members;
+        this.polls = data.polls;
+        this.selectedGoalId = this.initialGoalId();
         this.loading = false;
         this.changeDetector.markForCheck();
       },
@@ -147,8 +179,24 @@ export class MyCommunityDashboard implements OnInit {
     });
   }
 
+  ngOnChanges(): void {
+    this.selectedGoalId = this.initialGoalId();
+  }
+
   @HostListener('document:keydown.escape')
   onEscape(): void {
+    if (this.paymentDirection !== null) {
+      this.closePayment();
+      return;
+    }
+    if (this.selectedGoalId !== null) {
+      this.closeGoalDetails();
+      return;
+    }
+    if (this.selectedPoll) {
+      this.closePollDetails();
+      return;
+    }
     this.closed.emit();
   }
 
@@ -168,8 +216,105 @@ export class MyCommunityDashboard implements OnInit {
     this.functionUnavailableOpen = true;
   }
 
+  openCreatePoll(): void {
+    this.createPollOpen = true;
+  }
+
+  openCreateGoal(): void {
+    this.createGoalOpen = true;
+  }
+
+  openPayment(direction: PaymentDirection, goalId: number | null = null): void {
+    this.paymentDirection = direction;
+    this.paymentGoalId = goalId;
+  }
+
+  closePayment(): void {
+    this.paymentDirection = null;
+    this.paymentGoalId = null;
+  }
+
+  onPaymentCompleted(): void {
+    this.refreshPaymentsAndGoals();
+  }
+
+  onContributionRequested(): void {
+    const goalId = this.selectedGoalId;
+    this.closeGoalDetails();
+    this.openPayment('credit', goalId);
+  }
+
+  private refreshPaymentsAndGoals(): void {
+    forkJoin({
+      account: this.dashboardService.getAccount(this.accountId()),
+      transactions: this.dashboardService.getTransactions(this.accountId()),
+      goals: this.dashboardService.getGoals(this.accountId()),
+    }).subscribe({
+      next: (data) => {
+        this.account = data.account;
+        this.transactions = data.transactions;
+        this.goals = data.goals;
+        this.changeDetector.markForCheck();
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Unable to refresh community payments', error);
+      },
+    });
+  }
+
+  closeCreateGoal(): void {
+    this.createGoalOpen = false;
+    this.dashboardService.getGoals(this.accountId()).subscribe({
+      next: (goals) => {
+        this.goals = goals;
+        this.changeDetector.markForCheck();
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Unable to load community goals', error);
+      },
+    });
+  }
+
+  closeCreatePoll(): void {
+    this.createPollOpen = false;
+    this.dashboardService
+      .getPolls(this.accountId(), this.createdByUserId() ?? undefined)
+      .subscribe({
+      next: (polls) => {
+        this.polls = polls;
+        this.changeDetector.markForCheck();
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Unable to load community polls', error);
+      },
+    });
+  }
+
   closeUnavailable(): void {
     this.functionUnavailableOpen = false;
+  }
+
+  openPollDetails(poll: PollResult): void {
+    this.selectedPoll = poll;
+  }
+
+  openGoalDetails(goal: GoalProgress): void {
+    this.selectedGoalId = goal.id;
+  }
+
+  closeGoalDetails(): void {
+    this.selectedGoalId = null;
+  }
+
+  closePollDetails(): void {
+    this.selectedPoll = null;
+  }
+
+  updatePoll(poll: PollResult): void {
+    this.polls = this.polls.map((currentPoll) =>
+      currentPoll.id === poll.id ? poll : currentPoll,
+    );
+    this.selectedPoll = poll;
   }
 
   memberInitials(name: string): string {
@@ -193,6 +338,15 @@ export class MyCommunityDashboard implements OnInit {
     return `${new Intl.NumberFormat('sk-SK', {
       maximumFractionDigits: 2,
     }).format(amount)} ${currency}`;
+  }
+
+  formatPollClosingDate(closesAt: string): string {
+    return new Intl.DateTimeFormat('sk-SK', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      timeZone: 'Europe/Bratislava',
+    }).format(new Date(closesAt));
   }
 
   goalRemainingTime(goal: GoalProgress): string | null {

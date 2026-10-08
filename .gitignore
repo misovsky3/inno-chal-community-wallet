@@ -3,6 +3,7 @@ frontend/dist/
 frontend/.angular/
 backend/__pycache__/
 backend/.venv/
+backend/data/poll_attachments/
 .DS_Store
 *.pyc
 .vscode

@@ -11,10 +11,14 @@ from ..schemas.contribution import (
     ContributionEntry,
     ContributionSummary,
 )
-from ..schemas.goal import Goal, GoalProgress
+from ..schemas.goal import Goal, GoalCreateRequest, GoalProgress
 from ..schemas.membership import AccountMember, Membership
 from ..schemas.organization import Organization
-from ..schemas.transaction import Transaction, TransactionDirection
+from ..schemas.transaction import (
+    Transaction,
+    TransactionCreateRequest,
+    TransactionDirection,
+)
 from ..schemas.user import User
 from ..storage.csv_store import CsvStore
 
@@ -46,6 +50,8 @@ TRANSACTIONS_STORE = CsvStore(
         "details",
         "recipient_message",
         "variable_symbol",
+        "specific_symbol",
+        "constant_symbol",
         "payer_reference",
         "goal_id",
         "payer_user_id",
@@ -312,6 +318,104 @@ def list_account_transactions(
     return sorted(transactions, key=lambda item: (item.date, item.id), reverse=True)
 
 
+def create_account_transaction(
+    account_id: int, request: TransactionCreateRequest
+) -> Transaction:
+    account = get_account(account_id)
+    if account is None:
+        raise HTTPException(status_code=404, detail="Account not found")
+    if request.currency != account.currency:
+        raise HTTPException(
+            status_code=422, detail="Transaction currency must match account currency"
+        )
+
+    memberships = [
+        Membership.model_validate(row)
+        for row in MEMBERSHIPS_STORE.read_all()
+        if int(row["account_id"]) == account_id
+    ]
+    requester_membership = next(
+        (
+            member
+            for member in memberships
+            if member.user_id == request.created_by_user_id
+        ),
+        None,
+    )
+    if requester_membership is None:
+        raise HTTPException(status_code=403, detail="Community membership required")
+    if request.direction == "debit" and requester_membership.role != "admin":
+        raise HTTPException(status_code=403, detail="Demo account admin role required")
+    if request.goal_id is not None:
+        goal = next(
+            (
+                Goal.model_validate(row)
+                for row in GOALS_STORE.read_all()
+                if int(row["id"]) == request.goal_id
+                and int(row["account_id"]) == account_id
+            ),
+            None,
+        )
+        if goal is None:
+            raise HTTPException(status_code=422, detail="Goal does not belong to account")
+        if request.direction != "credit":
+            raise HTTPException(
+                status_code=422, detail="Goal transactions must be credits"
+            )
+        if request.date < goal.start_date or (
+            goal.end_date is not None and request.date > goal.end_date
+        ):
+            raise HTTPException(
+                status_code=422, detail="Transaction date is outside the goal period"
+            )
+
+    if request.direction == "debit" and request.amount > account.balance:
+        raise HTTPException(status_code=422, detail="Insufficient account balance")
+
+    transaction_rows = TRANSACTIONS_STORE.read_all()
+    transaction_id = max(
+        (int(row["id"]) for row in transaction_rows),
+        default=0,
+    ) + 1
+    transaction = Transaction(
+        id=transaction_id,
+        account_id=account_id,
+        goal_id=request.goal_id,
+        payer_user_id=request.created_by_user_id if request.direction == "credit" else None,
+        contribution_id=None,
+        date=request.date,
+        amount=request.amount,
+        currency=request.currency,
+        counterparty=request.counterparty.strip(),
+        direction=request.direction,
+        payment_type=request.payment_type.strip(),
+        details=request.details,
+        recipient_message=request.recipient_message,
+        variable_symbol=request.variable_symbol,
+        specific_symbol=request.specific_symbol,
+        constant_symbol=request.constant_symbol,
+        payer_reference=request.payer_reference,
+    )
+    transaction_row = transaction.model_dump(mode="json")
+    TRANSACTIONS_STORE.append(
+        {
+            key: "" if value is None else value
+            for key, value in transaction_row.items()
+        }
+    )
+
+    updated_accounts = ACCOUNTS_STORE.read_all()
+    balance_adjustment = (
+        request.amount if request.direction == "credit" else -request.amount
+    )
+    for row in updated_accounts:
+        if int(row["id"]) == account_id:
+            row["balance"] = str(account.balance + balance_adjustment)
+            break
+    ACCOUNTS_STORE.write_all(updated_accounts)
+    return transaction
+
+
 def list_account_goals(account_id: int) -> list[GoalProgress]:
     goals = [
         Goal.model_validate(row)
@@ -361,3 +465,51 @@ def list_account_goals(account_id: int) -> list[GoalProgress]:
         )
 
     return results
+
+
+def get_account_goal(account_id: int, goal_id: int) -> Optional[GoalProgress]:
+    return next(
+        (goal for goal in list_account_goals(account_id) if goal.id == goal_id),
+        None,
+    )
+
+
+def create_account_goal(
+    account_id: int, request: GoalCreateRequest
+) -> GoalProgress:
+    account = get_account(account_id)
+    if account is None:
+        raise HTTPException(status_code=404, detail="Account not found")
+
+    membership = next(
+        (
+            Membership.model_validate(row)
+            for row in MEMBERSHIPS_STORE.read_all()
+            if int(row["account_id"]) == account_id
+            and int(row["user_id"]) == request.created_by_user_id
+        ),
+        None,
+    )
+    if membership is None or membership.role != "admin":
+        raise HTTPException(status_code=403, detail="Demo account admin role required")
+    if request.end_date < date.today():
+        raise HTTPException(status_code=422, detail="end_date cannot be in the past")
+
+    rows = GOALS_STORE.read_all()
+    goal_id = max((int(row["id"]) for row in rows), default=0) + 1
+    GOALS_STORE.append(
+        {
+            "id": goal_id,
+            "account_id": account_id,
+            "name": request.name.strip(),
+            "goal_type": "temporary",
+            "target_amount": request.target_amount,
+            "currency": account.currency,
+            "start_date": date.today().isoformat(),
+            "end_date": request.end_date.isoformat(),
+            "description": request.description or "",
+        }
+    )
+    return next(
+        goal for goal in list_account_goals(account_id) if goal.id == goal_id
+    )

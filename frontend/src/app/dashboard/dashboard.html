@@ -19,7 +19,7 @@
         <button class="icon-button" type="button" aria-label="Zavolať" routerLink="/function-unavailable">
           <img src="assets/icons/phone-icon.svg" alt="" />
         </button>
-        <button class="icon-button" type="button" aria-label="Upraviť" routerLink="/function-unavailable">
+        <button class="icon-button" type="button" aria-label="Upraviť" routerLink="/">
           <img src="assets/icons/edit-icon.svg" alt="" />
         </button>
       </div>
@@ -153,3 +153,12 @@
   </nav>
   <div class="home-indicator" aria-hidden="true"><span></span></div>
 </main>
+
+@if (invitationToken && userId !== null) {
+  <app-join-community-modal
+    [token]="invitationToken"
+    [userId]="userId"
+    (declined)="onInvitationDeclined()"
+    (joined)="onInvitationJoined($event)"
+  />
+}

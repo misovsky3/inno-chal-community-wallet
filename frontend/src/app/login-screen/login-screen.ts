@@ -3,15 +3,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { timer } from 'rxjs';
 import { FaceidSpinner } from '../faceid-spinner/faceid-spinner';
-import { JoinCommunityModal } from '../join-community-modal/join-community-modal';
-import type { InvitationJoinResult } from '../my-community-dashboard/my-community-dashboard.service';
 import { UsersService } from '../users.service';
 import type { User } from '../users.service';
 
 @Component({
   selector: 'app-login-screen',
   standalone: true,
-  imports: [FaceidSpinner, JoinCommunityModal, RouterLink],
+  imports: [FaceidSpinner, RouterLink],
   templateUrl: './login-screen.html',
   styleUrl: './login-screen.css',
 })
@@ -28,7 +26,6 @@ export class LoginScreen implements OnInit {
   loadError = false;
   authenticating = false;
   invitationToken: string | null = null;
-  joinModalOpen = false;
 
   ngOnInit(): void {
     this.invitationToken = this.route.snapshot.paramMap.get('token');
@@ -68,24 +65,14 @@ export class LoginScreen implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.authenticating = false;
-        if (this.invitationToken) {
-          this.joinModalOpen = true;
-          this.changeDetector.markForCheck();
-        } else {
-          void this.router.navigate(['/dashboard'], {
-            queryParams: { userId },
-          });
-        }
+        void this.router.navigate(['/dashboard'], {
+          queryParams: {
+            userId,
+            ...(this.invitationToken
+              ? { invitationToken: this.invitationToken }
+              : {}),
+          },
+        });
       });
   }
-
-  onInvitationJoined(result: InvitationJoinResult): void {
-    void this.router.navigate(['/communities-list'], {
-      queryParams: {
-        userId: result.user_id,
-        accountId: result.account_id,
-      },
-    });
-  }
-
 }

@@ -409,6 +409,183 @@
   background: #1d1e23;
 }
 
+.polls-section {
+  min-height: 100%;
+  background: #1d1e23;
+}
+
+.polls-heading {
+  margin: 0;
+  padding: 0 16px 20px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 26px;
+}
+
+.poll-list {
+  min-height: 100%;
+  padding: 8px 16px 24px;
+  background: #000;
+}
+
+.poll-card {
+  display: flex;
+  width: 100%;
+  min-height: 72px;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 8px;
+  padding: 14px 16px;
+  border: 0;
+  border-radius: 8px;
+  background: #1d1e23;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.poll-card:focus-visible {
+  outline: 2px solid #0097fd;
+  outline-offset: 2px;
+}
+
+.poll-icon {
+  width: 18px;
+  height: 22px;
+  flex: 0 0 18px;
+  fill: none;
+  stroke: #0097fd;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.poll-copy {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.poll-copy h3 {
+  overflow: hidden;
+  margin: 0;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 21px;
+  text-overflow: ellipsis;
+}
+
+.poll-copy p {
+  margin: 2px 0 0;
+  color: #9194a4;
+  font-size: 13px;
+  line-height: 19px;
+}
+
+.poll-status-indicator {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+  border: 1.5px solid #0097fd;
+  border-right-color: #565860;
+  border-radius: 50%;
+}
+
+.poll-status-closed {
+  border-color: #565860;
+}
+
+.polls-empty {
+  display: flex;
+  min-height: 246px;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 8px 16px 24px;
+}
+
+.polls-empty-illustration {
+  width: 106px;
+  height: 106px;
+  flex: 0 0 106px;
+}
+
+.empty-illustration-shadow {
+  fill: #1d2b36;
+}
+
+.empty-illustration-board {
+  fill: #41414f;
+  stroke: #7b7891;
+  stroke-width: 1;
+}
+
+.empty-illustration-board-inner {
+  fill: #252631;
+  stroke: #aaa5bd;
+  stroke-width: 0.8;
+}
+
+.empty-illustration-lines {
+  fill: none;
+  stroke: #aaa5bd;
+  stroke-linecap: round;
+  stroke-width: 1.5;
+}
+
+.empty-illustration-chart {
+  fill: none;
+  stroke: #0097fd;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1;
+}
+
+.empty-illustration-head {
+  fill: #f4a4a1;
+}
+
+.empty-illustration-person,
+.empty-illustration-arm {
+  fill: #0097fd;
+}
+
+.empty-illustration-leg {
+  fill: #343342;
+}
+
+.empty-illustration-accent {
+  stroke: #0097fd;
+  stroke-linecap: round;
+  stroke-width: 2;
+}
+
+.empty-illustration-dot {
+  fill: #0097fd;
+}
+
+.polls-empty-copy {
+  min-width: 0;
+  max-width: 270px;
+}
+
+.polls-empty-copy h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.polls-empty-copy p {
+  margin: 5px 0 0;
+  color: #9194a4;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .dashboard-message {
   margin: 0;
   padding: 28px 20px;
@@ -453,11 +630,24 @@
 }
 
 .goal-card {
+  display: block;
+  width: 100%;
   min-height: 164px;
   overflow: hidden;
   margin-bottom: 16px;
+  padding: 0;
+  border: 0;
   border-radius: 7px;
   background: linear-gradient(135deg, #292a30, #202125);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.goal-card:focus-visible {
+  outline: 2px solid #0097fd;
+  outline-offset: 2px;
 }
 
 .goal-card-heading {
@@ -470,13 +660,15 @@
   border-bottom: 1px solid #2c2e34;
 }
 
-.goal-card-heading h3 {
+.goal-card-title {
   min-width: 0;
+  overflow: hidden;
   margin: 0;
   color: #fff;
   font-size: 16px;
   font-weight: 700;
   line-height: 1.15;
+  text-overflow: ellipsis;
 }
 
 .goal-status {
@@ -495,12 +687,14 @@
 }
 
 .goal-card-details {
+  display: block;
   padding: 12px 18px 10px;
 }
 
 .goal-raised,
 .goal-target,
 .goal-remaining {
+  display: block;
   margin: 0;
 }
 
@@ -525,6 +719,7 @@
 }
 
 .goal-progress {
+  display: block;
   height: 5px;
   margin-top: 12px;
   overflow: hidden;
@@ -681,5 +876,17 @@ button:focus-visible {
     width: 100%;
     max-width: none;
     border-radius: 0;
+  }
+
+  .polls-empty {
+    gap: 12px;
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .polls-empty-illustration {
+    width: 92px;
+    height: 92px;
+    flex-basis: 92px;
   }
 }

@@ -1,0 +1,36 @@
+.notification-banner {
+  position: fixed;
+  z-index: 1000;
+  top: max(12px, env(safe-area-inset-top));
+  left: 50%;
+  display: flex;
+  width: min(calc(100% - 24px), 366px);
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  transform: translateX(-50%);
+  border: 1px solid #3e414b;
+  border-radius: 10px;
+  background: #24262d;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 40%);
+  color: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.notification-title {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.notification-message {
+  color: #d0d2dc;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.notification-banner:focus-visible {
+  outline: 2px solid #0097fd;
+  outline-offset: 2px;
+}

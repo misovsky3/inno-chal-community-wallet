@@ -105,8 +105,8 @@ export class MyCommunityInviteScreen {
       )
       .subscribe({
         next: (invitation) => {
-        const invitePath = invitation.invite_path.replace(/^\/+/, '');
-        const url = new URL(invitePath, document.baseURI).toString();
+          const invitePath = invitation.invite_path.replace(/^\/+/, '');
+          const url = new URL(invitePath, document.baseURI).toString();
           this.inviteUrl = url;
           this.changeDetector.markForCheck();
           QRCode.toDataURL(url, {
@@ -114,8 +114,8 @@ export class MyCommunityInviteScreen {
             margin: 2,
             width: 280,
           })
-          .then((dataUrl) => {
-            this.qrCodeDataUrl = dataUrl;
+            .then((dataUrl) => {
+              this.qrCodeDataUrl = dataUrl;
               this.generating = false;
               this.changeDetector.markForCheck();
             })

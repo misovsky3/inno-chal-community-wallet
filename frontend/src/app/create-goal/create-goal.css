@@ -1,0 +1,329 @@
+:host {
+  position: fixed;
+  z-index: 22;
+  inset: 0;
+  display: block;
+  color: #fff;
+  font-family: "Tatra banka Sans V1.0", "Nimbus Sans D OT", "Helvetica Neue", Arial, sans-serif;
+}
+
+.create-goal-backdrop {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  background: #000;
+}
+
+.create-goal-screen {
+  position: relative;
+  display: flex;
+  width: min(100%, 390px);
+  height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 32px;
+  background: #1d1e23;
+}
+
+.create-goal-header {
+  z-index: 2;
+  flex: 0 0 89px;
+  background: #1d1e23;
+}
+
+.status-bar {
+  display: flex;
+  height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.status-icons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-icons img {
+  display: block;
+  max-height: 16px;
+  filter: grayscale(1) brightness(0) invert(1);
+}
+
+.create-goal-toolbar {
+  display: grid;
+  height: 45px;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  padding: 0 16px;
+  border-bottom: 1px solid #2c2e34;
+}
+
+.create-goal-toolbar h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.back-button {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #0097fd;
+  cursor: pointer;
+}
+
+.back-button svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.create-goal-form {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.form-content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 20px 16px 24px;
+  scrollbar-width: none;
+}
+
+.form-content::-webkit-scrollbar {
+  display: none;
+}
+
+.community-name {
+  margin: 0 0 22px;
+  color: #9194a4;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.form-content h2 {
+  margin: 0 0 22px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 24px;
+}
+
+.field-shell {
+  position: relative;
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 0 16px;
+  border-radius: 12px;
+  background: #121315;
+}
+
+.field-shell input,
+.field-shell textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+}
+
+.field-shell input::placeholder,
+.field-shell textarea::placeholder {
+  color: #9194a4;
+  opacity: 1;
+}
+
+.field-shell input:focus::placeholder,
+.field-shell textarea:focus::placeholder {
+  opacity: 0;
+}
+
+.field-placeholder {
+  position: absolute;
+  left: 16px;
+  color: #9194a4;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.field-placeholder b,
+.date-placeholder b {
+  color: #0097fd;
+  font-weight: 400;
+}
+
+.field-shell:focus-within .field-placeholder,
+.date-field:focus-within .date-placeholder {
+  visibility: hidden;
+}
+
+.field-placeholder + input {
+  position: relative;
+  z-index: 1;
+}
+
+.description-field {
+  min-height: 72px;
+  align-items: flex-start;
+  padding-top: 14px;
+}
+
+.description-field textarea {
+  height: 44px;
+  resize: vertical;
+}
+
+.date-field {
+  overflow: hidden;
+}
+
+.date-field input {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  color: #fff;
+  color-scheme: dark;
+  opacity: 0;
+}
+
+.date-field input:focus,
+.date-field input:valid {
+  opacity: 1;
+}
+
+.date-placeholder {
+  position: absolute;
+  left: 16px;
+  color: #9194a4;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.date-field svg {
+  position: absolute;
+  z-index: 2;
+  right: 16px;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: #0097fd;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+  pointer-events: none;
+}
+
+.amount-field input {
+  padding-right: 56px;
+  appearance: textfield;
+}
+
+.amount-field input::-webkit-inner-spin-button,
+.amount-field input::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+.currency {
+  position: absolute;
+  right: 20px;
+  color: #a4a6b2;
+  font-size: 12px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.create-goal-actions {
+  flex: 0 0 auto;
+  padding: 12px 16px max(10px, env(safe-area-inset-bottom));
+  background: #000;
+}
+
+.primary-action {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  border: 0;
+  border-radius: 8px;
+  background: linear-gradient(105deg, #078eff, #0084f6);
+  color: #fff;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primary-action:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.form-error {
+  margin: 0 0 10px;
+  color: #ff9d9d;
+  font-size: 13px;
+  line-height: 18px;
+  text-align: center;
+}
+
+.primary-action:focus-visible,
+.back-button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.home-indicator {
+  display: grid;
+  height: 44px;
+  place-items: center;
+}
+
+.home-indicator span {
+  width: 149px;
+  height: 5px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+@media (max-width: 599px) {
+  .create-goal-screen {
+    width: 100%;
+    max-width: none;
+    border-radius: 0;
+  }
+}

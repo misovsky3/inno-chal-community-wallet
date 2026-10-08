@@ -53,19 +53,19 @@
 
         @if (communityRole() === 'admin') {
           <nav class="admin-actions" aria-label="Akcie komunity">
-            <button class="admin-action" type="button" (click)="showUnavailable()">
+            <button class="admin-action" type="button" (click)="openPayment('debit')">
               <span class="admin-action-icon">
                 <img src="assets/icons/payment-action-icon.svg" alt="" />
               </span>
               <span>Platba</span>
             </button>
-            <button class="admin-action" type="button" (click)="showUnavailable()">
+            <button class="admin-action" type="button" (click)="openCreateGoal()">
               <span class="admin-action-icon">
                 <img src="assets/icons/create-goal-icon.svg" alt="" />
               </span>
               <span>Vytvoriť<br />cieľ</span>
             </button>
-            <button class="admin-action" type="button" (click)="showUnavailable()">
+            <button class="admin-action" type="button" (click)="openCreatePoll()">
               <span class="admin-action-icon">
                 <img src="assets/icons/start-vote-icon.svg" alt="" />
               </span>
@@ -127,24 +127,29 @@
           <section class="goals-section" aria-label="Ciele komunity">
             <header class="goals-header">
               <h2>Ciele</h2>
-              <button type="button" class="add-goal-button" (click)="showUnavailable()">Pridať cieľ</button>
             </header>
             @for (goal of goals; track goal.id) {
-              <article class="goal-card" [class.goal-card-completed]="goal.status !== 'in_progress'">
-                <header class="goal-card-heading">
-                  <h3>{{ goal.name }}</h3>
+              <button
+                class="goal-card"
+                type="button"
+                [class.goal-card-completed]="goal.status !== 'in_progress'"
+                (click)="openGoalDetails(goal)"
+                [attr.aria-label]="'Zobraziť detail cieľa: ' + goal.name"
+              >
+                <span class="goal-card-heading">
+                  <span class="goal-card-title">{{ goal.name }}</span>
                   <span class="goal-status" [class.goal-status-completed]="goal.status !== 'in_progress'">
                     {{ goal.status === 'in_progress' ? 'Aktívne' : 'Ukončené' }}
                   </span>
-                </header>
-                <div class="goal-card-details">
-                  <p class="goal-raised">
+                </span>
+                <span class="goal-card-details">
+                  <span class="goal-raised">
                     Vyzbierané: <strong>{{ formatGoalAmount(goal.raised_amount, goal.currency) }}</strong>
-                  </p>
-                  <p class="goal-target">
+                  </span>
+                  <span class="goal-target">
                     Cieľová suma: <strong>{{ formatGoalAmount(goal.target_amount, goal.currency) }}</strong>
-                  </p>
-                  <div
+                  </span>
+                  <span
                     class="goal-progress"
                     [class.goal-progress-completed]="goal.status !== 'in_progress'"
                     role="progressbar"
@@ -154,19 +159,65 @@
                     aria-valuemax="100"
                   >
                     <span [style.width.%]="goal.progress_percentage"></span>
-                  </div>
+                  </span>
                   @if (goalRemainingTime(goal); as remainingTime) {
-                    <p class="goal-remaining">{{ remainingTime }}</p>
+                    <span class="goal-remaining">{{ remainingTime }}</span>
                   }
-                </div>
-              </article>
+                </span>
+              </button>
             } @empty {
               <p class="dashboard-message goals-empty">Komunita zatiaľ nemá žiadne ciele.</p>
             }
           </section>
         } @else if (selectedTab === 'votes') {
-          <section class="tab-content" aria-label="Hlasovania komunity">
-            <p class="dashboard-message">Hlasovania nie sú dostupné.</p>
+          <section class="polls-section" aria-label="Hlasovania komunity">
+            <h2 class="polls-heading">Hlasovania</h2>
+            @if (polls.length) {
+              <div class="poll-list">
+                @for (poll of polls; track poll.id) {
+                  <button
+                    class="poll-card"
+                    type="button"
+                    (click)="openPollDetails(poll)"
+                    [attr.aria-label]="'Zobraziť hlasovanie: ' + poll.question"
+                  >
+                    <svg class="poll-icon" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M7 2.75h7l5 5v13.5a1 1 0 0 1-1 1H7a2 2 0 0 1-2-2v-15a2.5 2.5 0 0 1 2-2.5Z" />
+                      <path d="M14 3v5h5M8.5 12h7M8.5 15.5h7M8.5 19h4" />
+                    </svg>
+                    <div class="poll-copy">
+                      <h3>{{ poll.question }}</h3>
+                      <p>{{ poll.status === 'open' ? 'Aktívne do' : 'Ukončené' }}{{ poll.status === 'open' ? ' ' + formatPollClosingDate(poll.closes_at) : '' }}</p>
+                    </div>
+                    <span
+                      class="poll-status-indicator"
+                      [class.poll-status-closed]="poll.status === 'closed'"
+                      [attr.aria-label]="poll.status === 'open' ? 'Aktívne hlasovanie' : 'Ukončené hlasovanie'"
+                    ></span>
+                  </button>
+                }
+              </div>
+            } @else {
+              <div class="polls-empty">
+                <svg class="polls-empty-illustration" viewBox="0 0 112 112" aria-hidden="true">
+                  <path class="empty-illustration-shadow" d="M10 48c7-15 18-21 29-20 12 1 17-14 31-10 15 4 19 19 27 34 11 20 3 35-16 43-20 8-54 7-68-6C2 77 2 64 10 48Z" />
+                  <path class="empty-illustration-board" d="M23 31h62a5 5 0 0 1 5 5v42a5 5 0 0 1-5 5H23a5 5 0 0 1-5-5V36a5 5 0 0 1 5-5Z" />
+                  <path class="empty-illustration-board-inner" d="M25 37h57v38H25z" />
+                  <path class="empty-illustration-lines" d="M29 43h12m5 0h13m-30 5h18" />
+                  <path class="empty-illustration-chart" d="m30 68 8-14 7 12 8-19 7 16 8-9 7 14" />
+                  <circle class="empty-illustration-head" cx="60" cy="47" r="7" />
+                  <path class="empty-illustration-person" d="M52 55c-5 2-7 7-7 12v14h24V65c0-6-3-9-8-10l-4 7-5-7Z" />
+                  <path class="empty-illustration-arm" d="m63 59 10-12 3 3-8 16" />
+                  <path class="empty-illustration-leg" d="M51 81h9l-2 17h-9zm9 0h9l5 17h-9z" />
+                  <path class="empty-illustration-accent" d="M23 26h27M23 22h17" />
+                  <circle class="empty-illustration-dot" cx="18" cy="22" r="2.5" />
+                </svg>
+                <div class="polls-empty-copy">
+                  <h3>Nemáte žiadne prebiehajúce hlasovanie</h3>
+                  <p>Pre spustenie hlasovania sa obráťte na svojho správcu</p>
+                </div>
+              </div>
+            }
           </section>
         } @else if (selectedTab === 'members') {
           <section class="members-section" aria-label="Členovia komunity">
@@ -208,5 +259,57 @@
   <app-function-unavailable
     [embedded]="true"
     (closed)="closeUnavailable()"
+  />
+}
+
+@if (createPollOpen) {
+  <app-create-poll
+    [communityName]="organizations[0]?.name ?? account?.name ?? communityHeading"
+    [accountId]="accountId()"
+    [createdByUserId]="createdByUserId()"
+    (closed)="closeCreatePoll()"
+  />
+}
+
+@if (createGoalOpen) {
+  <app-create-goal
+    [communityName]="organizations[0]?.name ?? account?.name ?? communityHeading"
+    [accountId]="accountId()"
+    [createdByUserId]="createdByUserId()"
+    [currency]="account?.currency ?? 'EUR'"
+    (closed)="closeCreateGoal()"
+  />
+}
+
+@if (selectedPoll; as poll) {
+  <app-poll-details
+    [poll]="poll"
+    [communityName]="organizations[0]?.name ?? account?.name ?? communityHeading"
+    [userId]="createdByUserId()"
+    (updated)="updatePoll($event)"
+    (closed)="closePollDetails()"
+  />
+}
+
+@if (selectedGoalId !== null) {
+  <app-goal-details
+    [accountId]="accountId()"
+    [goalId]="selectedGoalId"
+    [communityName]="organizations[0]?.name ?? account?.name ?? communityHeading"
+    (contributeRequested)="onContributionRequested()"
+    (closed)="closeGoalDetails()"
+  />
+}
+
+@if (paymentDirection && account; as currentAccount) {
+  <app-new-payment
+    [account]="currentAccount"
+    [communityName]="organizations[0]?.name ?? currentAccount.name"
+    [direction]="paymentDirection"
+    [goalId]="paymentGoalId"
+    [goalName]="paymentGoalName"
+    [createdByUserId]="createdByUserId()"
+    (completed)="onPaymentCompleted()"
+    (closed)="closePayment()"
   />
 }

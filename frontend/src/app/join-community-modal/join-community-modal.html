@@ -14,10 +14,9 @@
     >×</button>
 
     <div class="community-mark" aria-hidden="true">
-      <svg viewBox="0 0 48 48">
-        <path d="M8 21 24 8l16 13v19H8z" />
-        <path d="M19 40V27h10v13M16 20h.1M32 20h.1" />
-      </svg>
+        <span class="svg">
+            <img src="assets/icons/my-communities-blue-icon.svg" alt="" />
+        </span>
     </div>
 
     <h1 id="join-title">Pozvánka do komunity</h1>
@@ -29,7 +28,7 @@
     } @else {
       <p class="join-copy">
         Chcete sa pripojiť ku komunite
-        <strong>{{ community?.name }}</strong>?
+        <strong>{{ community?.name }}?</strong>
       </p>
       @if (invitation) {
         <p class="role-copy">Pridelené oprávnenie: {{ invitationRoleLabel }}</p>

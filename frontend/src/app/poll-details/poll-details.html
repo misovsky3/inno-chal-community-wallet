@@ -1,1 +1,138 @@
-<p>poll-details works!</p>
+<div class="poll-details-backdrop">
+  <main
+    class="poll-details-screen"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="poll-details-title"
+  >
+    <header class="poll-details-header">
+      <div class="status-bar" aria-label="Čas 4:20, mobilný signál, Wi-Fi, batéria">
+        <span>4:20</span>
+        <span class="status-icons" aria-hidden="true">
+          <img src="assets/icons/mobile-signal-icon.svg" alt="" />
+          <img src="assets/icons/wifi-icon.svg" alt="" />
+          <img src="assets/icons/battery-icon.svg" alt="" />
+        </span>
+      </div>
+      <div class="poll-details-toolbar">
+        <button class="back-button" type="button" aria-label="Späť" (click)="closed.emit()">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4-8 8 8 8" /></svg>
+        </button>
+        <h1 id="poll-details-title">Detail hlasovania</h1>
+        <span aria-hidden="true"></span>
+      </div>
+    </header>
+
+    <div class="poll-details-content">
+      <p class="community-name">{{ communityName() }}</p>
+
+      <section class="proposal-section" aria-labelledby="proposal-heading">
+        <h2 id="proposal-heading">Predmet hlasovania</h2>
+        <article class="proposal-card">
+          <header class="proposal-card-heading">
+            <h3>{{ poll().question }}</h3>
+            <span class="poll-status" [class.poll-status-closed]="poll().status === 'closed'">
+              {{ poll().status === 'open' ? 'Aktívne' : 'Ukončené' }}
+            </span>
+          </header>
+          @if (poll().description) {
+            <p class="proposal-description">{{ poll().description }}</p>
+          }
+          <div class="closing-date">
+            <span>Hlasovanie končí</span>
+            <strong>{{ formatClosingDate(poll().closes_at) }}</strong>
+          </div>
+        </article>
+      </section>
+
+      @if (poll().amount || poll().details) {
+        <section class="cost-section" aria-labelledby="cost-heading">
+          <h2 id="cost-heading">Náklady a financovanie</h2>
+          @if (poll().amount) {
+            <p class="poll-amount">{{ formatAmount(poll().amount!) }}</p>
+          }
+          @if (poll().details) {
+            <p class="poll-details-copy">{{ poll().details }}</p>
+          }
+        </section>
+      }
+
+      @if (poll().attachment_name && poll().attachment_url) {
+        <section class="attachments-section" aria-labelledby="attachments-heading">
+          <h2 id="attachments-heading">Prílohy</h2>
+          <p class="section-description">Prílohy na posúdenie návrhu</p>
+          <a class="attachment-card" [href]="poll().attachment_url" target="_blank" rel="noopener">
+            <svg class="attachment-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7 2.75h7l5 5v13.5a1 1 0 0 1-1 1H7a2 2 0 0 1-2-2v-15a2.5 2.5 0 0 1 2-2.5Z" />
+              <path d="M14 3v5h5M8.5 12h7M8.5 15.5h7M8.5 19h4" />
+            </svg>
+            <span class="attachment-copy">
+              <strong>{{ poll().attachment_name }}</strong>
+              <small>PDF • Dokument k hlasovaniu</small>
+            </span>
+            <svg class="attachment-chevron" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m9 5 7 7-7 7" />
+            </svg>
+          </a>
+        </section>
+      }
+
+      <section class="vote-section" aria-labelledby="vote-heading">
+        <h2 id="vote-heading">Váš hlas</h2>
+        <p class="section-description">{{ poll().question }}</p>
+        <form (submit)="submitVote($event)">
+          <div class="vote-options" role="radiogroup" aria-label="Možnosti hlasovania">
+            @for (option of poll().options; track option.id) {
+              <label class="vote-option" [class.vote-option-selected]="selectedOptionId === option.id">
+                <input
+                  type="radio"
+                  name="poll-vote"
+                  [value]="option.id"
+                  [checked]="selectedOptionId === option.id"
+                  [disabled]="poll().status !== 'open' || hasVoted || submitting"
+                  (change)="selectOption(option.id)"
+                />
+                <span class="vote-option-content">
+                  <span class="vote-option-label">{{ option.label }}</span>
+                  <span
+                    class="vote-progress"
+                    role="progressbar"
+                    [attr.aria-label]="'Podpora možnosti ' + option.label"
+                    [attr.aria-valuenow]="optionProgress(option.votes)"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  >
+                    <span [style.width.%]="optionProgress(option.votes)"></span>
+                  </span>
+                  <small class="vote-option-result">
+                    {{ optionProgress(option.votes) }} % · {{ option.votes }} hlasov
+                  </small>
+                </span>
+              </label>
+            } @empty {
+              <p class="section-description">Pre toto hlasovanie nie sú dostupné žiadne možnosti.</p>
+            }
+          </div>
+
+          <p class="vote-hint">
+            {{ hasVoted ? 'Váš hlas už bol odoslaný.' : 'Vyberte jednu možnosť a potvrďte svoj hlas.' }}
+          </p>
+          @if (errorMessage) {
+            <p class="vote-message vote-error" role="alert">{{ errorMessage }}</p>
+          }
+          @if (successMessage) {
+            <p class="vote-message vote-success" role="status">{{ successMessage }}</p>
+          }
+          <button
+            class="primary-action"
+            type="submit"
+            [disabled]="submitting || hasVoted || selectedOptionId === null || poll().status !== 'open'"
+          >
+            {{ submitting ? 'Odosielam hlas…' : hasVoted ? 'Hlas odoslaný' : 'Odoslať hlas' }}
+          </button>
+        </form>
+      </section>
+    </div>
+    <div class="home-indicator" aria-hidden="true"><span></span></div>
+  </main>
+</div>

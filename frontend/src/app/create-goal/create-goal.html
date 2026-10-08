@@ -1,0 +1,103 @@
+<div class="create-goal-backdrop">
+  <main
+    class="create-goal-screen"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="create-goal-title"
+  >
+    <header class="create-goal-header">
+      <div class="status-bar" aria-label="Čas 4:20, mobilný signál, Wi-Fi, batéria">
+        <span>4:20</span>
+        <span class="status-icons" aria-hidden="true">
+          <img src="assets/icons/mobile-signal-icon.svg" alt="" />
+          <img src="assets/icons/wifi-icon.svg" alt="" />
+          <img src="assets/icons/battery-icon.svg" alt="" />
+        </span>
+      </div>
+      <div class="create-goal-toolbar">
+        <button class="back-button" type="button" aria-label="Späť" (click)="closed.emit()">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4-8 8 8 8" /></svg>
+        </button>
+        <h1 id="create-goal-title">Pridať cieľ</h1>
+        <span aria-hidden="true"></span>
+      </div>
+    </header>
+
+    <form class="create-goal-form" (submit)="onSubmit($event)">
+      <section class="form-content" aria-label="Detaily cieľa">
+        <p class="community-name">{{ communityName() }}</p>
+
+        <h2>Cieľ</h2>
+        <label class="field-shell">
+          <span class="visually-hidden">Názov cieľa (povinné)</span>
+          @if (!name) {
+            <span class="field-placeholder" aria-hidden="true">Názov cieľa <b>*</b></span>
+          }
+          <input
+            name="name"
+            type="text"
+            maxlength="240"
+            required
+            aria-label="Názov cieľa"
+            (input)="name = inputValue($event)"
+          />
+        </label>
+        <label class="field-shell description-field">
+          <span class="visually-hidden">Popis</span>
+          <textarea
+            name="description"
+            placeholder="Popis"
+            maxlength="4000"
+            rows="2"
+            aria-label="Popis"
+            (input)="description = inputValue($event)"
+          ></textarea>
+        </label>
+        <label class="field-shell amount-field">
+          <span class="visually-hidden">Cieľová suma v {{ currency() }} (povinné)</span>
+          @if (!targetAmount) {
+            <span class="field-placeholder" aria-hidden="true">Cieľová suma <b>*</b></span>
+          }
+          <input
+            name="targetAmount"
+            type="number"
+            min="0.01"
+            step="0.01"
+            required
+            aria-label="Cieľová suma"
+            (input)="targetAmount = inputValue($event)"
+          />
+          <span class="currency">{{ currency() }}</span>
+        </label>
+        <label class="field-shell date-field">
+          <span class="visually-hidden">Dátum ukončenia zbierky (povinné)</span>
+          @if (!endDate) {
+            <span class="date-placeholder" aria-hidden="true">Dátum ukončenia zbierky <b>*</b></span>
+          }
+          <input
+            name="endDate"
+            type="date"
+            [min]="minimumDate"
+            required
+            aria-label="Dátum ukončenia zbierky"
+            (input)="endDate = inputValue($event)"
+          />
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 4h14a1 1 0 0 1 1 1v15H4V5a1 1 0 0 1 1-1Z" />
+            <path d="M8 2v4M16 2v4M4 9h16M8 13h2v2H8zM13 13h2v2h-2z" />
+          </svg>
+        </label>
+      </section>
+
+      <footer class="create-goal-actions">
+        @if (errorMessage) {
+          <p class="form-error" role="alert">{{ errorMessage }}</p>
+        }
+        <button class="primary-action" type="submit" [disabled]="submitting">
+          {{ submitting ? 'Pridávam cieľ…' : 'Pridať cieľ' }}
+        </button>
+        <div class="home-indicator" aria-hidden="true"><span></span></div>
+      </footer>
+    </form>
+  </main>
+</div>

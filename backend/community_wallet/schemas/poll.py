@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 from typing import Literal, Optional
 
 from pydantic import BaseModel, Field, field_validator
@@ -14,9 +15,13 @@ class PollOptionInput(BaseModel):
 class PollCreateRequest(BaseModel):
     created_by_user_id: int
     question: str = Field(min_length=3, max_length=240)
-    description: Optional[str] = None
+    description: Optional[str] = Field(default=None, max_length=4000)
     closes_at: datetime
     options: list[PollOptionInput] = Field(min_length=2, max_length=8)
+    amount: Optional[Decimal] = Field(
+        default=None, gt=0, max_digits=12, decimal_places=2
+    )
+    details: Optional[str] = Field(default=None, max_length=2000)
 
     @field_validator("description", mode="before")
     @classmethod
@@ -40,6 +45,11 @@ class PollResult(BaseModel):
     status: PollStatus
     total_votes: int
     options: list[PollOptionResult]
+    user_has_voted: bool = False
+    amount: Optional[Decimal] = None
+    details: Optional[str] = None
+    attachment_name: Optional[str] = None
+    attachment_url: Optional[str] = None
 
 
 class CastVoteRequest(BaseModel):

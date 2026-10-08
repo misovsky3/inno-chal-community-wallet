@@ -3,7 +3,7 @@
   z-index: 30;
   inset: 0;
   display: block;
-  color: #24252a;
+  color: #fff;
   font-family: "Tatra banka Sans V1.0", "Nimbus Sans D OT", "Helvetica Neue", Arial, sans-serif;
 }
 
@@ -14,16 +14,17 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: rgb(0 0 0 / 55%);
+  background: rgb(0 0 0 / 72%);
 }
 
 .join-modal {
   position: relative;
   width: min(100%, 390px);
   padding: 36px 28px 28px;
+  border: 1px solid #2c2e34;
   border-radius: 24px;
-  background: #fff;
-  box-shadow: 0 16px 48px rgb(0 0 0 / 24%);
+  background: linear-gradient(145deg, #2c2e34, #202226);
+  box-shadow: 0 16px 48px rgb(0 0 0 / 40%);
   text-align: center;
 }
 
@@ -35,7 +36,7 @@
   height: 36px;
   border: 0;
   background: transparent;
-  color: #62636a;
+  color: #9194a4;
   cursor: pointer;
   font-size: 28px;
 }
@@ -47,17 +48,27 @@
   margin: 0 auto 18px;
   place-items: center;
   border-radius: 50%;
-  background: #fff3f0;
-  color: #e64217;
+  /*background: rgb(0 151 253 / 12%);*/
+  color: #0097fd;
 }
 
-.community-mark svg {
-  width: 34px;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 2;
+.community-mark .svg {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.community-mark .svg img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: 150px;
+  max-width: none;
+  height: auto;
+  transform: translate(-50%, -50%);
 }
 
 h1 {
@@ -68,7 +79,7 @@ h1 {
 
 .join-copy {
   margin: 16px 0 8px;
-  color: #4f5057;
+  color: #c5c8d1;
   font-size: 16px;
   line-height: 1.5;
 }
@@ -76,18 +87,18 @@ h1 {
 .join-copy strong {
   display: block;
   margin-top: 4px;
-  color: #24252a;
+  color: #fff;
 }
 
 .role-copy,
 .status-message {
   margin: 10px 0 0;
-  color: #676870;
+  color: #9194a4;
   font-size: 14px;
 }
 
 .error-message {
-  color: #b42318;
+  color: #ff9d9d;
 }
 
 .join-actions {
@@ -100,7 +111,7 @@ h1 {
 .join-actions button {
   min-height: 48px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   font: inherit;
   font-size: 15px;
@@ -114,13 +125,19 @@ h1 {
 }
 
 .decline-button {
-  border: 1px solid #b9bac0;
-  background: #fff;
-  color: #32333a;
+  border: 1px solid #5d6070;
+  background: #1d1e23;
+  color: #fff;
 }
 
 .accept-button {
-  border: 1px solid #e64217;
-  background: #e64217;
+  border: 1px solid #0097fd;
+  background: linear-gradient(105deg, #009cff, #0878f5);
   color: #fff;
+}
+
+.join-actions button:focus-visible,
+.close-button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
 }

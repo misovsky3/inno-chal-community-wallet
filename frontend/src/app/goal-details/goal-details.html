@@ -1,0 +1,152 @@
+<div class="goal-details-backdrop">
+  <main
+    class="goal-details-screen"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="goal-details-title"
+  >
+    <header class="goal-details-header">
+      <div class="status-bar" aria-label="Čas 4:20, mobilný signál, Wi-Fi, batéria">
+        <span>4:20</span>
+        <span class="status-icons" aria-hidden="true">
+          <img src="assets/icons/mobile-signal-icon.svg" alt="" />
+          <img src="assets/icons/wifi-icon.svg" alt="" />
+          <img src="assets/icons/battery-icon.svg" alt="" />
+        </span>
+      </div>
+      <div class="goal-details-toolbar">
+        <button class="back-button" type="button" aria-label="Späť" (click)="closed.emit()">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4-8 8 8 8" /></svg>
+        </button>
+        <h1 id="goal-details-title">Detail cieľa</h1>
+        <span aria-hidden="true"></span>
+      </div>
+    </header>
+
+    <div class="goal-details-content">
+      <p class="community-name">{{ communityName() }}</p>
+
+      @if (loading) {
+        <p class="goal-message" role="status">Načítavam detail cieľa…</p>
+      } @else if (loadError || !goal) {
+        <p class="goal-message error-message" role="alert">
+          Detail cieľa sa nepodarilo načítať.
+        </p>
+      } @else {
+        <article class="goal-summary-card">
+          <header class="goal-summary-heading">
+            <h2>{{ goal.name }}</h2>
+            <span class="goal-status" [class.goal-status-completed]="goal.status !== 'in_progress'">
+              {{ statusLabel(goal.status) }}
+            </span>
+          </header>
+          <div class="goal-summary-details">
+            <p class="goal-raised">
+              Vyzbierané: <strong>{{ formatAmount(goal.raised_amount, goal.currency) }}</strong>
+            </p>
+            <p class="goal-target">
+              Cieľová suma: <strong>{{ formatAmount(goal.target_amount, goal.currency) }}</strong>
+            </p>
+            <div
+              class="goal-progress"
+              [class.goal-progress-completed]="goal.status !== 'in_progress'"
+              role="progressbar"
+              [attr.aria-label]="'Priebeh cieľa ' + goal.name"
+              [attr.aria-valuenow]="goal.progress_percentage"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            >
+              <span [style.width.%]="goal.progress_percentage"></span>
+            </div>
+          </div>
+        </article>
+
+        <nav class="goal-tabs" role="tablist" aria-label="Detail cieľa">
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="selectedTab === 'goal'"
+            [class.active]="selectedTab === 'goal'"
+            (click)="selectTab('goal')"
+          >O cieli</button>
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="selectedTab === 'movements'"
+            [class.active]="selectedTab === 'movements'"
+            (click)="selectTab('movements')"
+          >Pohyby</button>
+        </nav>
+
+        @if (selectedTab === 'goal') {
+          <section class="goal-detail-card" aria-label="Detaily cieľa">
+            <div class="amount-row">
+              <strong>Cieľová suma:</strong>
+              <span>{{ formatAmount(goal.target_amount, goal.currency) }}</span>
+            </div>
+            <div class="amount-row raised-row">
+              <strong>Vyzbierané:</strong>
+              <span>{{ formatAmount(goal.raised_amount, goal.currency) }}</span>
+            </div>
+            <p class="completion">
+              Splnené na {{ formatProgress(goal.progress_percentage) }} %
+            </p>
+            <div class="amount-row remaining-row">
+              <strong>Do cieľa chýba:</strong>
+              <span>{{ formatAmount(goal.remaining_amount, goal.currency) }}</span>
+            </div>
+            <div class="details-copy">
+              <h2>Detaily</h2>
+              <p>{{ goal.description || 'K tomuto cieľu zatiaľ nie je uvedený popis.' }}</p>
+            </div>
+          </section>
+
+          <section class="end-date-card">
+            <span>{{ goal.end_date ? 'Dátum ukončenia zbierky' : 'Typ cieľa' }}</span>
+            <strong>{{ goal.end_date ? formatEndDate(goal.end_date) : 'Trvalý cieľ' }}</strong>
+          </section>
+        } @else {
+          <section class="movement-list" aria-label="Pohyby cieľa" aria-live="polite">
+            @if (movementsLoading) {
+              <p class="goal-message" role="status">Načítavam pohyby…</p>
+            } @else if (movementsLoadError) {
+              <p class="goal-message error-message" role="alert">
+                Pohyby sa nepodarilo načítať.
+              </p>
+              <button class="movement-retry" type="button" (click)="selectTab('movements')">
+                Skúsiť znova
+              </button>
+            } @else {
+              @for (group of movementGroups; track group.key) {
+                <section class="movement-group" [attr.aria-label]="group.label">
+                  <h2 class="movement-cycle-heading">{{ group.label }}</h2>
+                  @for (movement of group.transactions; track movement.id) {
+                    <article class="movement-row">
+                      <span class="movement-direction" aria-hidden="true">+</span>
+                      <span class="movement-name">{{ movement.counterparty }}</span>
+                      <strong class="movement-amount">
+                        {{ formatMovementAmount(movement.amount) }}
+                        <small>{{ movement.currency }}</small>
+                      </strong>
+                    </article>
+                  }
+                </section>
+              } @empty {
+                <p class="goal-message">Pre tento cieľ zatiaľ nie sú žiadne pohyby.</p>
+              }
+            }
+          </section>
+        }
+      }
+    </div>
+
+    <footer class="goal-details-footer">
+      @if (!loading && !loadError && goal?.status === 'in_progress') {
+        <button class="primary-action" type="button" (click)="contributeRequested.emit()">
+          Prispieť
+        </button>
+      }
+      <div class="home-indicator" aria-hidden="true"><span></span></div>
+    </footer>
+  </main>
+</div>

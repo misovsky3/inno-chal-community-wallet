@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { JoinCommunityModal } from '../join-community-modal/join-community-modal';
+import type { InvitationJoinResult } from '../my-community-dashboard/my-community-dashboard.service';
 
 interface Account {
   name: string;
@@ -24,11 +26,43 @@ interface QuickAction {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink],
+  imports: [JoinCommunityModal, RouterLink],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
 export class Dashboard {
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+
+  invitationToken: string | null = null;
+  userId: number | null = null;
+
+  ngOnInit(): void {
+    const params = this.route.snapshot.queryParamMap;
+    const userId = Number(params.get('userId'));
+    this.userId = Number.isInteger(userId) && userId > 0 ? userId : null;
+    this.invitationToken = params.get('invitationToken');
+  }
+
+  onInvitationDeclined(): void {
+    this.invitationToken = null;
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { invitationToken: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+  }
+
+  onInvitationJoined(result: InvitationJoinResult): void {
+    void this.router.navigate(['/communities-list'], {
+      queryParams: {
+        userId: result.user_id,
+        accountId: result.account_id,
+      },
+    });
+  }
+
   readonly accounts: Account[] = [
     {
       name: 'Demo firemný účet',

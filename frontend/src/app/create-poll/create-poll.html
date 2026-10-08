@@ -1,1 +1,128 @@
-<p>create-poll works!</p>
+<div class="create-poll-backdrop">
+  <main
+    class="create-poll-screen"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="create-poll-title"
+  >
+    <header class="create-poll-header">
+      <div class="status-bar" aria-label="Čas 4:20, mobilný signál, Wi-Fi, batéria">
+        <span>4:20</span>
+        <span class="status-icons" aria-hidden="true">
+          <img src="assets/icons/mobile-signal-icon.svg" alt="" />
+          <img src="assets/icons/wifi-icon.svg" alt="" />
+          <img src="assets/icons/battery-icon.svg" alt="" />
+        </span>
+      </div>
+      <div class="create-poll-toolbar">
+        <button class="back-button" type="button" aria-label="Späť" (click)="closed.emit()">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4-8 8 8 8" /></svg>
+        </button>
+        <h1 id="create-poll-title">Vytvoriť hlasovanie</h1>
+        <span aria-hidden="true"></span>
+      </div>
+    </header>
+
+    <form class="create-poll-form" (submit)="onSubmit($event)">
+      <section class="form-content" aria-label="Detaily hlasovania">
+        <p class="community-name">{{ communityName() }}</p>
+
+        <h2>Predmet hlasovania</h2>
+        <label class="field-shell">
+          <span class="visually-hidden">Predmet hlasovania (povinné)</span>
+          @if (!question) {
+            <span class="field-placeholder" aria-hidden="true">Predmet hlasovania <b>*</b></span>
+          }
+          <input
+            name="question"
+            type="text"
+            maxlength="240"
+            required
+            aria-label="Predmet hlasovania"
+            (input)="question = inputValue($event)"
+          />
+        </label>
+        <label class="field-shell">
+          <span class="visually-hidden">Popis</span>
+          <textarea
+            name="description"
+            placeholder="Popis"
+            rows="1"
+            (input)="description = inputValue($event)"
+          ></textarea>
+        </label>
+        <label class="field-shell date-field">
+          <span class="visually-hidden">Dátum ukončenia hlasovania (povinné)</span>
+          @if (!closesAt) {
+            <span class="date-placeholder" aria-hidden="true">Dátum ukončenia hlasovania <b>*</b></span>
+          }
+          <input
+            name="closesAt"
+            type="date"
+            [min]="minimumDate"
+            required
+            aria-label="Dátum ukončenia hlasovania"
+            (input)="closesAt = inputValue($event)"
+          />
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 4h14a1 1 0 0 1 1 1v15H4V5a1 1 0 0 1 1-1Z" />
+            <path d="M8 2v4M16 2v4M4 9h16M8 13h2v2H8zM13 13h2v2h-2z" />
+          </svg>
+        </label>
+
+        <h2 class="cost-heading">Náklady a financovanie</h2>
+        <label class="field-shell amount-field">
+          <span class="visually-hidden">Suma v EUR (povinné)</span>
+          @if (!amount) {
+            <span class="field-placeholder" aria-hidden="true">Suma <b>*</b></span>
+          }
+          <input
+            name="amount"
+            type="number"
+            min="0.01"
+            step="0.01"
+            required
+            aria-label="Suma v EUR"
+            (input)="amount = inputValue($event)"
+          />
+          <span class="currency">EUR</span>
+        </label>
+        <label class="field-shell">
+          <span class="visually-hidden">Detaily</span>
+          <textarea
+            name="details"
+            placeholder="Detaily"
+            rows="1"
+            (input)="details = inputValue($event)"
+          ></textarea>
+        </label>
+
+        <h2 class="attachments-heading">Prílohy</h2>
+        <label class="field-shell attachment-field">
+          <span class="attachment-name">
+            {{ attachment?.name ?? 'Prílohy na posúdenie návrhu' }}
+          </span>
+          <span class="attachment-type">PDF</span>
+          <input
+            class="file-input"
+            name="attachment"
+            type="file"
+            accept="application/pdf,.pdf"
+            aria-label="Príloha na posúdenie návrhu (PDF)"
+            (change)="onAttachmentChange($event)"
+          />
+        </label>
+      </section>
+
+      <footer class="create-poll-actions">
+        @if (errorMessage) {
+          <p class="form-error" role="alert">{{ errorMessage }}</p>
+        }
+        <button class="primary-action" type="submit" [disabled]="submitting">
+          {{ submitting ? 'Spúšťam hlasovanie…' : 'Spustiť hlasovanie' }}
+        </button>
+        <div class="home-indicator" aria-hidden="true"><span></span></div>
+      </footer>
+    </form>
+  </main>
+</div>

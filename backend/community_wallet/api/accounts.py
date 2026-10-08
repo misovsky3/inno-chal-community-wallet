@@ -4,21 +4,29 @@ from typing import Literal, Optional
 from fastapi import APIRouter, HTTPException, Query
 
 from ..schemas.account import Account
-from ..schemas.contribution import ContributionCreateRequest, ContributionEntry, ContributionSummary
-from ..schemas.goal import GoalProgress
+from ..schemas.contribution import (
+    ContributionCreateRequest,
+    ContributionEntry,
+    ContributionSummary,
+)
+from ..schemas.goal import GoalCreateRequest, GoalProgress
 from ..schemas.membership import AccountMember
 from ..schemas.organization import Organization
-from ..schemas.transaction import Transaction
+from ..schemas.transaction import Transaction, TransactionCreateRequest
 from ..services.community import (
-    get_account,
     create_account_contribution,
+    create_account_goal,
+    create_account_transaction,
+    get_account_goal,
+    get_account,
     list_account_contributions,
+    list_account_goals,
     list_account_members,
     list_account_organizations,
     list_accounts,
-    list_account_goals,
     list_account_transactions,
 )
+from ..services.notifications import notify_account_members_new_goal
 
 
 router = APIRouter(prefix="/accounts", tags=["accounts"])
@@ -58,6 +66,30 @@ def get_account_goals(account_id: int) -> list[GoalProgress]:
     return list_account_goals(account_id)
 
 
+@router.get("/{account_id}/goals/{goal_id}", response_model=GoalProgress)
+def get_account_goal_details(account_id: int, goal_id: int) -> GoalProgress:
+    if get_account(account_id) is None:
+        raise HTTPException(status_code=404, detail="Account not found")
+    goal = get_account_goal(account_id, goal_id)
+    if goal is None:
+        raise HTTPException(status_code=404, detail="Goal not found")
+    return goal
+
+
+@router.post("/{account_id}/goals", response_model=GoalProgress, status_code=201)
+def post_account_goal(
+    account_id: int, request: GoalCreateRequest
+) -> GoalProgress:
+    goal = create_account_goal(account_id, request)
+    notify_account_members_new_goal(
+        account_id,
+        request.created_by_user_id,
+        goal.id,
+        goal.name,
+    )
+    return goal
+
+
 @router.get("/{account_id}/contributions", response_model=ContributionSummary)
 def get_account_contributions(account_id: int) -> ContributionSummary:
     return list_account_contributions(account_id)
@@ -94,3 +126,14 @@ def get_account_transactions(
         direction=None if direction == "all" else direction,
         query=q,
     )
+
+
+@router.post(
+    "/{account_id}/transactions",
+    response_model=Transaction,
+    status_code=201,
+)
+def post_account_transaction(
+    account_id: int, request: TransactionCreateRequest
+) -> Transaction:
+    return create_account_transaction(account_id, request)

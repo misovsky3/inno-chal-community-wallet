@@ -99,6 +99,8 @@
     <app-my-community-dashboard
       [accountId]="community.id"
       [communityRole]="community.role"
+      [createdByUserId]="currentUserId"
+      [initialGoalId]="requestedGoalId"
       (closed)="closeCommunity()"
       (addMemberRequested)="inviteOpen = true"
     />
