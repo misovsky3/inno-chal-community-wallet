@@ -1,0 +1,6 @@
+id,account_id,name,goal_type,target_amount,currency,start_date,end_date,description
+1,1,Rezerva na obnovu strechy,permanent,10000.00,EUR,2026-01-01,,Dlhodobá rezerva bytového družstva
+2,2,Krmivo a veterinárna starostlivosť,permanent,2000.00,EUR,2026-01-01,,Priebežná pomoc pre zvieratá v útulku
+3,3,Nové dresy pre mládež,temporary,1200.00,EUR,2026-09-01,2026-12-31,Nákup tímových dresov
+4,4,Prenájom sály,temporary,1200.00,EUR,2026-09-01,2026-10-05,Cieľ na prenájom stužkovej sály
+5,4,Autobus na stužkovú,temporary,300.00,EUR,2026-09-01,2026-09-30,Príspevok na autobus

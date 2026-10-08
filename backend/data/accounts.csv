@@ -1,0 +1,5 @@
+id,name,iban,balance,currency,payme_url
+1,Bytové družstvo Javor,SK00 1100 0000 0000 0000 0001,3300.00,EUR,
+2,Útulok Labka,SK00 1100 0000 0000 0000 0002,1800.00,EUR,
+3,Športový klub Vĺčatá,SK00 1100 0000 0000 0000 0003,650.00,EUR,
+4,Stužková 25,SK00 1100 0000 0000 0000 0004,1450.00,EUR,

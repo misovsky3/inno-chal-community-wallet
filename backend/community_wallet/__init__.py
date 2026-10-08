@@ -1,0 +1,1 @@
+"""Community Wallet API package."""

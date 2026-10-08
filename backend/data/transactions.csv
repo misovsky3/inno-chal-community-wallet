@@ -1,0 +1,11 @@
+id,account_id,date,amount,currency,counterparty,direction,payment_type,details,recipient_message,variable_symbol,payer_reference,goal_id,payer_user_id,contribution_id
+1,1,2026-10-05,1000.00,EUR,Jana N.,credit,Platba,Prijatá platba,Príspevok na strechu,,,1,1,1
+2,1,2026-10-04,2400.00,EUR,Peter K.,credit,Platba,Prijatá platba,Príspevok na strechu,,,1,2,2
+3,1,2026-10-03,100.00,EUR,Strešná firma Demo s. r. o.,debit,SEPA,Odchádzajúca platba,Faktúra 1,,ref-001,,,
+4,2,2026-10-05,800.00,EUR,Lucia M.,credit,Platba,Prijatá platba,Príspevok na krmivo,,,2,3,3
+5,2,2026-10-03,1000.00,EUR,Zuzana B.,credit,Platba,Prijatá platba,Príspevok na krmivo,,,2,5,4
+6,3,2026-10-05,300.00,EUR,Martin P.,credit,Platba,Prijatá platba,Príspevok na dresy,,,3,4,5
+7,3,2026-10-04,350.00,EUR,Peter K.,credit,Platba,Prijatá platba,Príspevok na dresy,,,3,2,6
+8,4,2026-10-05,650.00,EUR,Zuzana B.,credit,Platba,Prijatá platba,Príspevok na sálu,,,4,5,7
+9,4,2026-10-04,650.00,EUR,Jana N.,credit,Platba,Prijatá platba,Príspevok na sálu,,,4,1,8
+10,4,2026-09-20,150.00,EUR,Zuzana B.,credit,Platba,Prijatá platba,Príspevok na autobus,,,5,5,9
